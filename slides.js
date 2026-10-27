@@ -126,8 +126,8 @@ export const SLIDES = [
     stats: [
       { num: "96", unit: "%", label: "たのしかった" },
       { num: "74", unit: "%", label: "段ボールは\nリサイクルできる" },
-      { num: "41", unit: "%", label: "カプセルづくりは\n福祉の仕事につながる" },
-      { num: "74", unit: "%", label: "おうちの人と\nリサイクルしてみたい" }
+      { num: "41", unit: "%", label: "カプセルは\n福祉の仕事に" },
+      { num: "74", unit: "%", label: "おうちで\nリサイクルしたい" }
     ],
     lines: [
       "福祉の伝わり方（41％）は、次回の改善点です"

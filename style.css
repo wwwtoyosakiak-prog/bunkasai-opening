@@ -189,3 +189,4 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .statcard .slabel{margin-top:1.8vh;font-size:clamp(17px,1.9vw,34px);font-weight:900;color:#fff;line-height:1.4}
 .slide.enter .stats{animation:fadeup .6s ease both;animation-delay:.25s}
 .stats + .lines{margin-top:4vh}
+.statcard .slabel{word-break:keep-all;overflow-wrap:anywhere}
