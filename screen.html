@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=29">
+<link rel="stylesheet" href="style.css?v=31">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -55,9 +55,9 @@
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, configured, phaseOf, setText, tally } from "./common.js?v=30";
-import { VIDEOS, videoById } from "./videos.js?v=30";
-import { SLIDES, renderRich } from "./slides.js?v=30";
+import { db, configured, phaseOf, setText, tally } from "./common.js?v=31";
+import { VIDEOS, videoById } from "./videos.js?v=31";
+import { SLIDES, renderRich } from "./slides.js?v=31";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const $ = id => document.getElementById(id);
@@ -258,7 +258,7 @@ function showSlide(i, color) {
   const fg = $("figure");
   fg.classList.toggle("hidden", !sl.figure);
   $("slide").classList.toggle("hasfig", !!sl.figure);
-  if (sl.figure) { const im = fg.querySelector("img"); im.src = sl.figure.src; im.classList.toggle("contain", sl.figure.fit === "contain"); fg.querySelector("figcaption").textContent = sl.figure.cap || ""; }
+  if (sl.figure) { const im = fg.querySelector("img"); im.src = sl.figure.src; im.classList.toggle("contain", sl.figure.fit === "contain"); im.style.objectPosition = sl.figure.pos || ""; fg.querySelector("figcaption").textContent = sl.figure.cap || ""; }
   setText($("pageNo"), String(i + 2));
   const sec = $("slide"); sec.classList.remove("enter"); void sec.offsetWidth; sec.classList.add("enter");
 }
