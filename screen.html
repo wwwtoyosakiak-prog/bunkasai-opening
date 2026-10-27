@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=36">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -53,12 +53,20 @@
 </section>
 
 <div class="corner" id="corner"></div>
+<nav id="nav" class="snav">
+  <button id="sprev" class="navbtn" aria-label="戻る">◀</button>
+  <span id="snext" class="navlabel"></span>
+  <button id="snextBtn" class="navbtn" aria-label="次へ">▶</button>
+</nav>
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, configured, phaseOf, setText, tally } from "./common.js?v=35";
-import { VIDEOS, videoById } from "./videos.js?v=35";
-import { SLIDES, renderRich } from "./slides.js?v=35";
+import { db, auth, now, configured, phaseOf, setText, tally } from "./common.js?v=36";
+import { VIDEOS, videoById } from "./videos.js?v=36";
+import { SLIDES, renderRich } from "./slides.js?v=36";
+import { nextStep, prevStep, stepName } from "./steps.js?v=36";
+import { update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const $ = id => document.getElementById(id);
@@ -296,6 +304,39 @@ function revealTitle(st, animate) {
     e.style.animationDuration = animate ? "" : "1ms";
   });
 }
+
+// ===== 発表画面からの操作（次へ・戻る） =====
+// 書き込みはデータベースのルールで発表者のGoogleアカウントだけに制限されている
+let presenter = null;
+onAuthStateChanged(auth, u => { presenter = u && !u.isAnonymous ? u : null; });
+async function ensureLogin() {
+  if (presenter) return true;
+  const provider = new GoogleAuthProvider();
+  try { await signInWithPopup(auth, provider); return true; }
+  catch (e) { if (e.code === "auth/popup-blocked") signInWithRedirect(auth, provider); flash("ログインできませんでした"); return false; }
+}
+async function go(st) {
+  if (!st) return;
+  if (!unlocked) $("unlock").click(); // ボタン操作をきっかけに動画の音声も有効にする
+  if (!(await ensureLogin())) return;
+  const data = st.phase === "go" ? { phase: "go", startAt: Math.round(now() + 1500) } : st.phase === "title" ? { phase: "title" } : st;
+  update(ref(db, "state"), data).catch(() => flash("このアカウントには操作権限がありません"));
+}
+$("snextBtn").onclick = () => go(nextStep(state));
+$("sprev").onclick = () => go(prevStep(state));
+// キーボード・プレゼン用リモコン：→ / Space / PageDown / Enter で次へ、← / PageUp で戻る
+addEventListener("keydown", e => {
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); go(nextStep(state)); }
+  if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); go(prevStep(state)); }
+});
+// ボタンはマウスを動かしたときだけ表示し、しばらくすると隠れる（聴衆の邪魔にならないように）
+let hideTimer = 0;
+function showNav() { $("nav").classList.add("show"); clearTimeout(hideTimer); hideTimer = setTimeout(() => $("nav").classList.remove("show"), 2500); }
+addEventListener("mousemove", showNav);
+addEventListener("touchstart", showNav, { passive: true });
+let flashUntil = 0;
+setInterval(() => { if (Date.now() > flashUntil) setText($("snext"), "次：" + stepName(nextStep(state))); }, 300);
+function flash(msg) { flashUntil = Date.now() + 3000; setText($("snext"), msg); showNav(); }
 </script>
 </body>
 </html>
