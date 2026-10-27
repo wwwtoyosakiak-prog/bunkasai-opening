@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=8">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -18,6 +18,7 @@
 <div id="count" class="count hidden"></div>
 <div id="lit" class="center hidden titlepage">
   <h1 id="title" class="title"></h1>
+  <div id="accentbar" class="accentbar"></div>
   <p id="subtitle" class="subtitle"></p>
   <div class="byline"><p id="seminar"></p><p id="presenter"></p></div>
 </div>
@@ -125,7 +126,10 @@ function frame() {
   }
 
   if (p.mode === "lit") {
-    document.body.style.background = state.color || "#ff3b6b";
+    // 点灯の瞬間だけテーマカラーで光らせ、その後は後ろの席からも読みやすい濃い背景に切り替える
+    const color = state.color || "#ff3b6b";
+    document.body.style.background = p.since < 1200 ? color : "#0b0b0f";
+    $("lit").style.setProperty("--tc", color);
     const key = [state.title, state.subtitle, state.presenter, state.seminar].join("\u0001");
     if (lastMode !== "lit") { revealTitle(state, p.since < 2000); titleKey = key; }
     else if (key !== titleKey) { revealTitle(state, false); titleKey = key; } // 表示中に内容を変更した場合
@@ -183,9 +187,9 @@ function revealTitle(st, animate) {
   });
   // 副題・ゼミ名・発表者はタイトルのあとにふわっと出す
   const after = animate ? 400 + text.length * 70 + 300 : 0;
-  [["subtitle", 0], ["seminar", 250], ["presenter", 400]].forEach(([id, d]) => {
+  [["accentbar", 0], ["subtitle", 0], ["seminar", 250], ["presenter", 400]].forEach(([id, d]) => {
     const e = $(id);
-    e.textContent = st[id] || "";
+    if (id !== "accentbar") e.textContent = st[id] || "";
     e.classList.remove("fadein"); void e.offsetWidth; e.classList.add("fadein");
     e.style.animationDelay = (after + (animate ? d : 0)) + "ms";
     e.style.animationDuration = animate ? "" : "1ms";
