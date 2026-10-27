@@ -10,6 +10,16 @@
         ".write": "auth != null && auth.uid === $uid",
         ".validate": "newData.val() === true"
       }
+    },
+    "votes": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email_verified === true && auth.token.email === 'YOUR_EMAIL@gmail.com'",
+      "$vid": {
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid && root.child('state/phase').val() === 'vote' && root.child('state/video').val() === $vid",
+          ".validate": "newData.val() === 'yes' || newData.val() === 'no'"
+        }
+      }
     }
   }
 }

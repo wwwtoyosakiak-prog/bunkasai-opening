@@ -17,10 +17,27 @@
 </main>
 <div id="count" class="count hidden"></div>
 <div id="lit" class="center hidden"><h1 id="title" class="title"></h1></div>
+
+<div id="stage" class="stage hidden"><p id="missing" class="missing hidden"></p></div>
+
+<section id="poll" class="poll hidden">
+  <h2><span id="pollQ"></span><span id="closed" class="closed hidden">締め切り</span></h2>
+  <p class="hint" id="pollHint"></p>
+  <div class="bar yes"><span id="yesLabel"></span><div class="track"><div class="fill" id="yesFill"></div></div><span class="num" id="yesNum"></span></div>
+  <div class="bar no"><span id="noLabel"></span><div class="track"><div class="fill" id="noFill"></div></div><span class="num" id="noNum"></span></div>
+  <div id="compare" class="compare hidden">
+    <p class="cap" id="compareCap"></p>
+    <div class="bar"><span>会場のみなさん</span><div class="track"><div class="fill" id="cmpUs"></div></div><span class="num" id="cmpUsNum"></span></div>
+    <div class="bar kids"><span id="kidsLabel"></span><div class="track"><div class="fill" id="cmpKids"></div></div><span class="num" id="cmpKidsNum"></span></div>
+  </div>
+</section>
+
 <div class="corner" id="corner"></div>
+<button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, configured, phaseOf, setText } from "./common.js";
+import { db, configured, phaseOf, setText, tally } from "./common.js";
+import { VIDEOS, videoById } from "./videos.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const $ = id => document.getElementById(id);
@@ -32,13 +49,56 @@ setText($("url"), joinURL.replace(/^https?:\/\//, "").replace(/\/$/, ""));
 
 if (!configured) { setText($("msg"), "config.js が未設定です"); throw new Error("not configured"); }
 
+// 動画は先に読み込んでおき、合図ですぐ再生できるようにする
+const players = {};
+for (const v of VIDEOS) {
+  const el = document.createElement("video");
+  el.src = v.src; el.preload = "auto"; el.playsInline = true; el.className = "hidden";
+  el.addEventListener("error", () => { el.dataset.missing = "1"; });
+  $("stage").appendChild(el);
+  players[v.id] = el;
+}
+
+// ブラウザは操作なしに音声付き再生をさせないため、開始前に一度クリックしてもらう
+let unlocked = false;
+$("unlock").onclick = async () => {
+  for (const el of Object.values(players)) {
+    try { el.muted = true; await el.play(); el.pause(); el.currentTime = 0; } catch {}
+    el.muted = false;
+  }
+  unlocked = true;
+  $("unlock").classList.add("hidden");
+  if (playing) playing.play().catch(() => {});
+};
+
 let target = 0, shown = 0, state = null;
 onValue(ref(db, "presence"), s => { target = s.size; });
 onValue(ref(db, "state"), s => { state = s.val(); });
 
-let lastMode = "", lastN = 0;
+// 表示中の動画の票だけを購読する
+let votes = { yes: 0, no: 0, total: 0, pct: 0 }, votesFor = null, unsub = null;
+function watchVotes(id) {
+  if (votesFor === id) return;
+  unsub?.(); votesFor = id; votes = tally(null);
+  unsub = onValue(ref(db, "votes/" + id), s => { votes = tally(s.val()); });
+}
+
+let playing = null;
+function playVideo(id) {
+  const el = players[id];
+  for (const [k, p] of Object.entries(players)) { p.classList.toggle("hidden", k !== id); if (k !== id) p.pause(); }
+  const missing = el?.dataset.missing === "1";
+  $("missing").classList.toggle("hidden", !missing);
+  if (missing) setText($("missing"), `動画ファイルが見つかりません（${videoById(id).src}）`);
+  if (!el || missing || playing === el) return;
+  playing = el;
+  el.currentTime = 0;
+  el.play().catch(() => { $("unlock").classList.remove("hidden"); setText($("unlock"), "▶ クリックして再生"); });
+}
+function stopVideo() { if (playing) { playing.pause(); playing = null; } }
+
+let lastMode = "", lastN = 0, lastVideo = null;
 function frame() {
-  // 人数はなめらかにカウントアップ
   shown += (target - shown) * 0.12;
   if (Math.abs(target - shown) < 0.5) shown = target;
   const n = Math.round(shown);
@@ -48,7 +108,9 @@ function frame() {
   $("wait").classList.toggle("hidden", p.mode !== "waiting");
   $("count").classList.toggle("hidden", !(p.mode === "count" || p.mode === "ready"));
   $("lit").classList.toggle("hidden", p.mode !== "lit");
-  setText($("corner"), p.mode === "waiting" ? "" : `${n} 人が参加中`);
+  $("stage").classList.toggle("hidden", p.mode !== "video");
+  $("poll").classList.toggle("hidden", !(p.mode === "vote" || p.mode === "result"));
+  setText($("corner"), p.mode === "waiting" || p.mode === "video" ? "" : `${n} 人が参加中`);
 
   if (p.mode === "ready") setText($("count"), "");
   if (p.mode === "count" && p.n !== lastN) {
@@ -57,26 +119,59 @@ function frame() {
     c.classList.remove("tick"); void c.offsetWidth; c.classList.add("tick");
     lastN = p.n;
   }
+
   if (p.mode === "lit") {
     document.body.style.background = state.color || "#ff3b6b";
-    if (lastMode !== "lit") revealTitle(state.title || "");
+    if (lastMode !== "lit") revealTitle(state.title || "", p.since < 2000);
   } else {
     document.body.style.background = "";
   }
+
+  if (p.mode === "video") playVideo(p.video); else stopVideo();
+
+  if (p.mode === "vote" || p.mode === "result") {
+    const v = videoById(p.video);
+    watchVotes(p.video);
+    setText($("pollQ"), v.question);
+    $("closed").classList.toggle("hidden", p.mode !== "result");
+    setText($("pollHint"), p.mode === "vote" ? `スマホで投票してください · ${votes.total}票` : `${votes.total}票`);
+    setText($("yesLabel"), v.yes);
+    setText($("noLabel"), v.no);
+    const yp = votes.total ? votes.yes / votes.total * 100 : 0, np = votes.total ? 100 - yp : 0;
+    $("yesFill").style.width = yp + "%";
+    $("noFill").style.width = np + "%";
+    setText($("yesNum"), `${Math.round(yp)}%`);
+    setText($("noNum"), `${Math.round(np)}%`);
+
+    const showCmp = p.mode === "result" && !!v.compare;
+    $("compare").classList.toggle("hidden", !showCmp);
+    if (showCmp) {
+      setText($("compareCap"), `「${v.yes}」の割合を比べると…`);
+      setText($("kidsLabel"), v.compare.label);
+      $("cmpUs").style.width = votes.pct + "%";
+      $("cmpKids").style.width = v.compare.yes + "%";
+      setText($("cmpUsNum"), votes.pct + "%");
+      setText($("cmpKidsNum"), v.compare.yes + "%");
+    } else {
+      $("cmpUs").style.width = "0"; $("cmpKids").style.width = "0";
+    }
+  }
+
   if (p.mode !== "count") lastN = 0;
   lastMode = p.mode;
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-// タイトルを1文字ずつ浮かび上がらせる
-function revealTitle(text) {
+// タイトルを1文字ずつ浮かび上がらせる（タイトル画面に戻ったときはすぐ表示）
+function revealTitle(text, animate) {
   const el = $("title");
   el.textContent = "";
   [...text].forEach((ch, i) => {
     const s = document.createElement("span");
     s.textContent = ch === " " ? " " : ch;
-    s.style.animationDelay = (400 + i * 70) + "ms";
+    s.style.animationDelay = animate ? (400 + i * 70) + "ms" : "0ms";
+    if (!animate) s.style.animationDuration = "1ms";
     el.appendChild(s);
   });
 }

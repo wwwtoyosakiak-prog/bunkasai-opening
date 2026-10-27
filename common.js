@@ -15,13 +15,32 @@ export const now = () => Date.now() + offset;
 
 export const COUNT_MS = 3000; // 3・2・1
 
-// state.phase が "go" のとき、startAt からの経過時間で表示を決める
+// 発表者が決めた state から、いま表示すべき場面を決める
+//  waiting: 開演前 / ready・count・lit: オープニング / title: タイトル表示
+//  video: 動画上映 / vote: 投票受付 / result: 投票結果
 export function phaseOf(state) {
-  if (!state || state.phase !== "go") return { mode: "waiting" };
-  const t = now() - state.startAt;
-  if (t < 0) return { mode: "ready" };
-  if (t < COUNT_MS) return { mode: "count", n: 3 - Math.floor(t / 1000) };
-  return { mode: "lit", since: t - COUNT_MS };
+  if (!state) return { mode: "waiting" };
+  switch (state.phase) {
+    case "go": {
+      const t = now() - state.startAt;
+      if (t < 0) return { mode: "ready" };
+      if (t < COUNT_MS) return { mode: "count", n: 3 - Math.floor(t / 1000) };
+      return { mode: "lit", since: t - COUNT_MS };
+    }
+    case "title": return { mode: "lit", since: Infinity };
+    case "video":
+    case "vote":
+    case "result": return { mode: state.phase, video: state.video };
+    default: return { mode: "waiting" };
+  }
+}
+
+// 投票の集計
+export function tally(snapVal) {
+  let yes = 0, no = 0;
+  for (const v of Object.values(snapVal || {})) { if (v === "yes") yes++; else if (v === "no") no++; }
+  const total = yes + no;
+  return { yes, no, total, pct: total ? Math.round(yes / total * 1000) / 10 : 0 };
 }
 
 const cache = new WeakMap();

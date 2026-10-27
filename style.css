@@ -50,3 +50,33 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .sw.sel{border-color:#fff}
 .go{font-size:22px;padding:22px;width:100%}
 .err{color:#ff6b6b;font-size:14px;min-height:1em}
+
+/* 投票（参加者） */
+.votebtns{display:flex;flex-direction:column;gap:14px;width:100%;max-width:340px;margin-top:8px}
+.vbtn{appearance:none;font:inherit;font-weight:900;font-size:22px;padding:22px;border-radius:18px;border:2px solid var(--line);background:#111;color:var(--fg);cursor:pointer;transition:transform .1s,background .2s,border-color .2s}
+.vbtn:active{transform:scale(.97)}
+.vbtn.yes.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+.vbtn.no.sel{background:#3a3a44;border-color:#8a8a93;color:#fff}
+
+/* 動画（発表画面） */
+.stage{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
+.stage video{width:100%;height:100%;object-fit:contain;background:#000}
+.stage .missing{position:absolute;color:var(--muted);font-size:18px}
+.unlock{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:10;font-size:14px;padding:10px 18px;min-width:0}
+
+/* 投票結果（発表画面） */
+.poll{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;gap:4vh;padding:6vh 8vw}
+.poll h2{font-size:clamp(32px,5vw,72px);font-weight:900;line-height:1.2}
+.poll .hint{font-size:clamp(16px,1.8vw,24px);color:var(--muted)}
+.bar{display:grid;grid-template-columns:minmax(160px,22%) 1fr minmax(120px,12%);align-items:center;gap:2vw;font-size:clamp(18px,2.2vw,32px);font-weight:700}
+.bar .track{height:clamp(36px,6vh,72px);background:#17171b;border-radius:999px;overflow:hidden}
+.bar .fill{height:100%;width:0;border-radius:999px;background:var(--accent);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar.no .fill{background:#5a5a66}
+.bar.kids .fill{background:#ffd60a}
+.bar .num{text-align:right;font-variant-numeric:tabular-nums;font-weight:900}
+.bar .num small{display:block;font-size:.55em;color:var(--muted);font-weight:700}
+.compare{border-top:1px solid var(--line);padding-top:4vh;display:flex;flex-direction:column;gap:2vh}
+.compare .cap{font-size:clamp(16px,1.8vw,24px);color:var(--muted)}
+.closed{display:inline-block;font-size:.4em;vertical-align:middle;margin-left:.6em;padding:.3em .8em;border-radius:999px;background:#fff;color:#000}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.steps .btn{min-width:0;padding:12px 6px;font-size:14px}

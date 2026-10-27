@@ -20,8 +20,32 @@
 <div id="count" class="count hidden"></div>
 <div id="lit" class="lit hidden"><p id="litTitle"></p></div>
 
+<main id="video" class="center hidden">
+  <p class="label">NOW SHOWING</p>
+  <h1 id="videoName"></h1>
+  <p class="sub">スクリーンの動画を見てください<br>このあと投票があります</p>
+</main>
+
+<main id="vote" class="center hidden">
+  <p class="label">VOTE</p>
+  <h1 id="voteQ"></h1>
+  <div class="votebtns">
+    <button id="yesBtn" class="vbtn yes"></button>
+    <button id="noBtn" class="vbtn no"></button>
+  </div>
+  <p id="voteMsg" class="sub"></p>
+</main>
+
+<main id="result" class="center hidden">
+  <p class="label">RESULT</p>
+  <h1>投票ありがとうございました</h1>
+  <p class="sub">結果はスクリーンで発表中です</p>
+  <p id="myVote" class="tiny"></p>
+</main>
+
 <script type="module">
 import { db, auth, configured, phaseOf, setText } from "./common.js";
+import { videoById } from "./videos.js";
 import { ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -62,12 +86,45 @@ onAuthStateChanged(auth, user => {
 let state = null;
 onValue(ref(db, "state"), s => { state = s.val(); });
 
+// 投票：自分の票だけ書き込める（受付中の動画に対してのみ、ルールで制限）
+const myVotes = {};
+let currentVideo = null;
+async function cast(choice) {
+  const user = auth.currentUser;
+  if (!user || !currentVideo) return;
+  myVotes[currentVideo] = choice;
+  paintVote();
+  try { await set(ref(db, `votes/${currentVideo}/${user.uid}`), choice); }
+  catch { setText($("voteMsg"), "受付が終了しました"); }
+}
+$("yesBtn").onclick = () => cast("yes");
+$("noBtn").onclick = () => cast("no");
+function paintVote() {
+  const mine = myVotes[currentVideo];
+  $("yesBtn").classList.toggle("sel", mine === "yes");
+  $("noBtn").classList.toggle("sel", mine === "no");
+  setText($("voteMsg"), mine ? "投票しました（締め切りまで変更できます）" : "どちらかをタップしてください");
+}
+
 let lastMode = "", lastN = 0;
 function frame() {
   const p = phaseOf(state);
+  for (const id of ["video", "vote", "result"]) $(id).classList.toggle("hidden", p.mode !== id);
   $("wait").classList.toggle("hidden", p.mode !== "waiting");
   $("count").classList.toggle("hidden", !(p.mode === "count" || p.mode === "ready"));
   $("lit").classList.toggle("hidden", p.mode !== "lit");
+
+  const v = p.video ? videoById(p.video) : null;
+  if (v) {
+    if (currentVideo !== v.id) { currentVideo = v.id; paintVote(); }
+    setText($("videoName"), v.name.replace(/^.*?：/, ""));
+    setText($("voteQ"), v.question);
+    setText($("yesBtn"), "👍 " + v.yes);
+    setText($("noBtn"), "👎 " + v.no);
+    const mine = myVotes[v.id];
+    setText($("myVote"), mine ? `あなたの投票：${mine === "yes" ? v.yes : v.no}` : "");
+    if (p.mode === "vote" && lastMode !== "vote") navigator.vibrate?.(120);
+  }
 
   if (p.mode === "count" && p.n !== lastN) {
     const c = $("count");

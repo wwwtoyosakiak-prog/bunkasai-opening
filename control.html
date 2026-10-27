@@ -32,8 +32,14 @@
     </div>
 
     <button id="go" class="btn primary go">3・2・1 スタート</button>
-    <button id="reset" class="btn danger">待機画面に戻す</button>
     <p id="err" class="err"></p>
+
+    <p class="label" style="margin-top:8px">動画と投票</p>
+    <div id="videos" style="display:flex;flex-direction:column;gap:14px"></div>
+
+    <button id="titleBtn" class="btn">タイトル画面に戻す</button>
+    <button id="reset" class="btn danger">待機画面に戻す</button>
+    <button id="clearVotes" class="btn danger">投票をすべてリセット</button>
 
     <div class="row"><span id="who" class="tiny"></span><button id="out" class="btn danger" style="min-width:0;padding:8px 14px;font-size:13px">ログアウト</button></div>
   </section>
@@ -41,8 +47,9 @@
 </div>
 
 <script type="module">
-import { db, auth, configured, now, phaseOf, setText } from "./common.js";
-import { ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { db, auth, configured, now, phaseOf, setText, tally } from "./common.js";
+import { VIDEOS } from "./videos.js";
+import { ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const $ = id => document.getElementById(id);
@@ -79,6 +86,10 @@ onAuthStateChanged(auth, u => {
   if (user && !subscribed) {
     subscribed = true;
     onValue(ref(db, "presence"), s => setText($("n"), String(s.size)));
+    for (const v of VIDEOS) onValue(ref(db, "votes/" + v.id), s => {
+      const t = tally(s.val());
+      setText(cards[v.id].tally, `👍 ${v.yes} ${t.yes}　👎 ${v.no} ${t.no}　（${t.pct}%）`);
+    });
     onValue(ref(db, "state"), s => {
       state = s.val();
       if (state?.title && document.activeElement !== $("titleIn")) $("titleIn").value = state.title;
@@ -99,12 +110,43 @@ function write(data) {
 $("save").onclick = () => write({ title: $("titleIn").value.trim(), color });
 $("go").onclick = () => write({ title: $("titleIn").value.trim(), color, phase: "go", startAt: Math.round(now() + 1500) });
 $("reset").onclick = () => { if (confirm("待機画面に戻しますか？")) write({ phase: "waiting" }); };
+$("titleBtn").onclick = () => write({ phase: "title" });
+$("clearVotes").onclick = () => {
+  if (!confirm("すべての投票を消しますか？（リハーサル後に使います）")) return;
+  remove(ref(db, "votes")).catch(e => setText($("err"), "リセットできませんでした：" + e.message));
+};
 
-const labels = { waiting: "待機中", ready: "まもなく", count: "カウント中", lit: "点灯中" };
+// 動画ごとの操作カード：上映 → 投票開始 → 締め切り（結果表示）
+const cards = {};
+for (const v of VIDEOS) {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `<div class="row"><b></b><span class="pill">-</span></div>
+    <span class="tiny"></span>
+    <div class="steps">
+      <button class="btn" data-p="video">▶ 上映</button>
+      <button class="btn" data-p="vote">投票開始</button>
+      <button class="btn" data-p="result">締め切り</button>
+    </div>`;
+  card.querySelector("b").textContent = v.name;
+  card.querySelectorAll("button").forEach(b => b.onclick = () => write({ phase: b.dataset.p, video: v.id }));
+  $("videos").appendChild(card);
+  cards[v.id] = { el: card, pill: card.querySelector(".pill"), tally: card.querySelector(".tiny"), btns: card.querySelectorAll("button") };
+  setText(cards[v.id].tally, "まだ投票はありません");
+}
+
+const labels = { waiting: "待機中", ready: "まもなく", count: "カウント中", lit: "タイトル表示中", video: "上映中", vote: "投票受付中", result: "結果表示中" };
+const steps = { video: "上映中", vote: "投票受付中", result: "結果表示中" };
 (function tick() {
   const p = phaseOf(state);
   setText($("state"), labels[p.mode]);
   $("state").classList.toggle("on", p.mode !== "waiting");
+  for (const [id, c] of Object.entries(cards)) {
+    const active = p.video === id;
+    setText(c.pill, active ? steps[p.mode] : "-");
+    c.pill.classList.toggle("on", active);
+    c.btns.forEach(b => b.classList.toggle("primary", active && b.dataset.p === p.mode));
+  }
   requestAnimationFrame(tick);
 })();
 </script>
