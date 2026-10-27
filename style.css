@@ -175,3 +175,4 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .slide.enter .splitfig{animation:fadeup .6s ease both;animation-delay:.2s}
 .heading + .quote + .lines + .items, .heading ~ .items{margin-top:4.5vh}
 .heading ~ .items li{font-size:clamp(24px,3vw,54px)}
+.items em,.facts dd em,.pillar p em{font-style:normal;color:var(--tc)}
