@@ -21,8 +21,8 @@ export const SLIDES = [
     heading: "**段ボール**でできたガチャガチャ",
     split: { src: "photos/lineup.jpg?v=1", cap: "ガチャ本体もカプセルも、すべて段ボール" },
     pillars: [
-      { icon: "photos/sdg12.png?v=1", title: "環境に貢献", text: "段ボールのリサイクル率は**ほぼ100％**" },
-      { icon: "photos/sdg8.png?v=1", title: "社会に貢献", text: "カプセルの組み立てを**福祉作業所**に依頼し、障がいのある人の仕事に" }
+      { icon: "photos/sdg12.png?v=1", title: "環境に貢献", text: "段ボールのリサイクル率は\n**ほぼ100％**" },
+      { icon: "photos/sdg8.png?v=1", title: "社会に貢献", text: "カプセルの組み立てを\n**福祉作業所**に依頼し、\n障がいのある人の仕事に" }
     ]
   },
   {
@@ -35,7 +35,7 @@ export const SLIDES = [
       ["今回", "多摩祭2026で**ワークショップ＋動画コンテスト**"]
     ],
     lines: [
-      "企業からの依頼：子どもも学生も楽しみながら、環境と福祉を学べる場に"
+      "企業からの依頼：\n子どもも学生も楽しみながら、環境と福祉を学べる場に"
     ]
   },
   {
