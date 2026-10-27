@@ -1,10 +1,10 @@
-// Firebaseコンソール →「プロジェクトの設定」→「マイアプリ（ウェブ）」に表示される値を貼り付けてください
+// Firebaseのウェブアプリ設定（ブラウザに公開される前提の値です。操作の制限はデータベースのルールで行っています）
 export const firebaseConfig = {
-  apiKey: "ここに貼り付け",
-  authDomain: "ここに貼り付け",
-  databaseURL: "ここに貼り付け",
-  projectId: "ここに貼り付け",
-  storageBucket: "ここに貼り付け",
-  messagingSenderId: "ここに貼り付け",
-  appId: "ここに貼り付け"
+  apiKey: "AIzaSyAo7MIQvP_PNwGUDtVJn4B3oqXRD5YFfhE",
+  authDomain: "bunkasai-opening.firebaseapp.com",
+  databaseURL: "https://bunkasai-opening-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "bunkasai-opening",
+  storageBucket: "bunkasai-opening.firebasestorage.app",
+  messagingSenderId: "205347108184",
+  appId: "1:205347108184:web:79d426eb6145ddb7e1612d"
 };
