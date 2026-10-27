@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>操作パネル</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=32">
+<link rel="stylesheet" href="style.css?v=33">
 </head>
 <body class="control">
 <div class="wrap">
@@ -47,6 +47,7 @@
         <button id="prev" class="btn">◀ 前へ</button>
         <button id="next" class="btn primary">次へ ▶</button>
       </div>
+      <p class="tiny" id="nextLabel"></p>
       <div id="slideList" style="display:flex;flex-direction:column;gap:6px"></div>
     </div>
 
@@ -63,9 +64,9 @@
 </div>
 
 <script type="module">
-import { db, auth, configured, now, phaseOf, setText, tally } from "./common.js?v=32";
-import { VIDEOS } from "./videos.js?v=32";
-import { SLIDES } from "./slides.js?v=32";
+import { db, auth, configured, now, phaseOf, setText, tally } from "./common.js?v=33";
+import { VIDEOS } from "./videos.js?v=33";
+import { SLIDES } from "./slides.js?v=33";
 import { ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -156,9 +157,23 @@ for (const v of VIDEOS) {
 
 // スライド操作：タイトル画面 → 2ページ目 → … の順に進む
 const goSlide = i => i < 0 ? write({ phase: "title" }) : write({ phase: "slide", slide: Math.min(i, SLIDES.length - 1) });
-const curSlide = () => { const p = phaseOf(state); return p.mode === "slide" ? p.slide : -1; };
-$("next").onclick = () => goSlide(curSlide() + 1);
-$("prev").onclick = () => goSlide(curSlide() - 1);
+// 発表の順番：タイトル → スライド →（動画のあるページでは）上映 → 投票 → 結果 → 次のスライド …
+const STEPS = [{ phase: "title" }];
+SLIDES.forEach((sl, i) => {
+  STEPS.push({ phase: "slide", slide: i });
+  if (sl.then) ["video", "vote", "result"].forEach(ph => STEPS.push({ phase: ph, video: sl.then }));
+});
+const stepName = st => !st ? "（最後です）" : st.phase === "title" ? "タイトル"
+  : st.phase === "slide" ? `${st.slide + 2}ページ目` + (SLIDES[st.slide].tag ? `：${SLIDES[st.slide].tag}` : "")
+  : ({ video: "動画を上映", vote: "投票を開始", result: "投票を締め切って結果" })[st.phase] + `（${st.video === "v1" ? "1本目" : "2本目"}）`;
+function curStep() {
+  const p = phaseOf(state);
+  if (p.mode === "lit") return 0;
+  return STEPS.findIndex(st => st.phase === p.mode && (p.mode === "slide" ? st.slide === p.slide : st.video === p.video));
+}
+const goStep = i => { const st = STEPS[i]; if (st) write(st.phase === "title" ? { phase: "title" } : st); };
+$("next").onclick = () => goStep(curStep() + 1);
+$("prev").onclick = () => goStep(Math.max(0, curStep() - 1));
 const slideBtns = SLIDES.map((sl, i) => {
   const b = document.createElement("button");
   b.className = "btn"; b.style.cssText = "min-width:0;padding:10px 14px;font-size:14px;text-align:left";
@@ -176,6 +191,7 @@ const steps = { video: "上映中", vote: "投票受付中", result: "結果表�
   $("state").classList.toggle("on", p.mode !== "waiting");
   const cs = p.mode === "slide" ? p.slide : -1;
   setText($("slideNow"), cs >= 0 ? `${cs + 2}ページ目：${SLIDES[cs].prep ? SLIDES[cs].prep + "｜" : ""}${SLIDES[cs].tag}` : (p.mode === "lit" ? "1ページ目：タイトル" : "-"));
+  setText($("nextLabel"), "次：" + stepName(STEPS[curStep() + 1]));
   setText($("slidePill"), `${cs >= 0 ? cs + 2 : (p.mode === "lit" ? 1 : "-")} / ${SLIDES.length + 1}`);
   slideBtns.forEach((b, i) => b.classList.toggle("primary", i === cs));
   for (const [id, c] of Object.entries(cards)) {

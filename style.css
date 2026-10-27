@@ -180,3 +180,12 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .slide.hasfig .heading{font-size:clamp(34px,4.6vw,84px)}
 .items li span:last-child{line-height:1.35}
 .slide.hasfig .items{gap:4vh}
+
+/* 大きな数字 */
+.stats{display:grid;gap:1.6vw;margin-top:4.5vh}
+.statcard{border:clamp(3px,.3vw,6px) solid #2a2a33;border-radius:18px;padding:3vh 1.2vw 2.6vh;text-align:center;background:#121217}
+.statcard .num{font-size:clamp(48px,6.4vw,124px);font-weight:900;color:var(--tc);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.statcard .num small{font-size:.38em;margin-left:.1em;color:#fff}
+.statcard .slabel{margin-top:1.8vh;font-size:clamp(17px,1.9vw,34px);font-weight:900;color:#fff;line-height:1.4}
+.slide.enter .stats{animation:fadeup .6s ease both;animation-delay:.25s}
+.stats + .lines{margin-top:4vh}
