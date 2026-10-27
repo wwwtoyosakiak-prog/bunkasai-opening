@@ -70,7 +70,9 @@ $("signin").onclick = async () => {
 $("out").onclick = () => signOut(auth);
 
 let subscribed = false;
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, u => {
+  // 参加ページを同じブラウザで開いた場合の匿名ログインは発表者として扱わない
+  const user = u && !u.isAnonymous ? u : null;
   $("login").classList.toggle("hidden", !!user);
   $("panel").classList.toggle("hidden", !user);
   setText($("who"), user ? user.email : "");

@@ -41,8 +41,15 @@ document.addEventListener("visibilitychange", () => {
 });
 
 // 接続人数のカウント用：自分の存在を登録し、切断時に自動で消す
+// すでにログイン中（発表者が同じブラウザで操作パネルを使っている等）ならその状態のまま参加する
+let registered = false;
 onAuthStateChanged(auth, user => {
-  if (!user) return;
+  if (!user) {
+    signInAnonymously(auth).catch(() => setText($("status"), "接続できませんでした。再読み込みしてください"));
+    return;
+  }
+  if (registered) return;
+  registered = true;
   const me = ref(db, "presence/" + user.uid);
   onValue(ref(db, ".info/connected"), s => {
     if (s.val() !== true) { setText($("status"), "再接続中…"); return; }
@@ -50,7 +57,6 @@ onAuthStateChanged(auth, user => {
     onDisconnect(me).remove().then(() => set(me, true));
   });
 });
-signInAnonymously(auth).catch(() => setText($("status"), "接続できませんでした。再読み込みしてください"));
 
 // 発表者の操作を受け取る（参加者側からは書き込めない）
 let state = null;
