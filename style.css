@@ -31,7 +31,7 @@ body{background:#000;color:var(--fg);font-family:"Noto Sans JP",system-ui,sans-s
 .screen .big{font-size:clamp(40px,7vw,96px);font-weight:900;line-height:1}
 .screen .big small{font-size:.4em;font-weight:700;color:var(--muted);margin-left:.2em}
 .corner{position:fixed;right:28px;bottom:22px;font-size:16px;color:rgba(255,255,255,.7);font-variant-numeric:tabular-nums}
-.title{font-size:clamp(44px,8vw,128px);font-weight:900;line-height:1.15;color:#fff;text-align:center;padding:0 6vw}
+.title{text-wrap:balance;font-size:clamp(40px,6.5vw,112px);font-weight:900;line-height:1.15;color:#fff;text-align:center;padding:0 6vw}
 .title span{display:inline-block;opacity:0;transform:translateY(.4em);animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes rise{to{opacity:1;transform:none}}
 .ring{position:fixed;inset:0;pointer-events:none}
