@@ -94,7 +94,7 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 
 /* スライド（発表画面）：濃い背景・大きな太字で後ろの席からも読める */
 .slide{position:fixed;inset:0;background:#0b0b0f;display:flex;flex-direction:column;justify-content:center;padding:18vh 8vw 10vh;--tc:#ff3b6b}
-.slide.enter .heading,.slide.enter .lines,.slide.enter .slidehead,.slide.enter .quote,.slide.enter .items,.slide.enter .facts,.slide.enter .photos,.slide.enter .sfig{animation:fadeup .6s ease both}
+.slide.enter .heading,.slide.enter .lines,.slide.enter .slidehead,.slide.enter .quote,.slide.enter .items,.slide.enter .facts,.slide.enter .photos,.slide.enter .sfig,.slide.enter .pillars{animation:fadeup .6s ease both}
 .slide.enter .quote{animation-delay:.5s}
 .slide.enter .lines{animation-delay:.9s}
 .slide.enter .heading{animation-delay:.08s}
@@ -150,3 +150,12 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .slide.hasfig .sfig{width:24vw}
 .slide.hasfig .facts dd{font-size:clamp(22px,2.55vw,46px);word-break:keep-all;overflow-wrap:anywhere}
 .slide.hasfig .facts{row-gap:2.2vh}
+
+/* 2本柱（環境・福祉） */
+.pillars{display:grid;grid-template-columns:1fr 1fr;gap:2vw;margin-top:5vh}
+.pillar{border:clamp(3px,.3vw,6px) solid var(--tc);border-radius:18px;padding:3vh 1.8vw}
+.pillar h3{font-size:clamp(28px,3.4vw,62px);font-weight:900;color:var(--tc);margin-bottom:1.6vh}
+.pillar p{font-size:clamp(20px,2.2vw,40px);font-weight:900;color:#fff;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
+.pillar p em{font-style:normal;color:var(--tc)}
+.slide.enter .pillars{animation-delay:.35s}
+.facts + .lines{margin-top:4vh}
