@@ -17,7 +17,7 @@ export const SLIDES = [
   {
     prep: "",
     tag: "活動の概要",
-    figure: { src: "photos/kit.jpg", cap: "子どもたちが作った段ボールガチャ" },
+    figure: { src: "photos/kit.jpg", cap: "完成した段ボールガチャ" },
     facts: [
       ["いつ", "2026年10月24日（土）　**多摩祭2026**"],
       ["どこで", "多摩大学 多摩キャンパス　アリーナ17番"],
@@ -32,8 +32,8 @@ export const SLIDES = [
     flow: true,
     photos: [
       { src: "photos/photo2.jpg", step: "①", cap: "紙芝居・クイズ", pos: "45% 50%" },
-      { src: "photos/photo1.jpg", step: "②", cap: "キット作成", pos: "45% 60%" },
-      { src: "photos/photo3.jpg", step: "③", cap: "動画コンテスト", pos: "60% 35%" }
+      { src: "photos/photo2b.jpg", step: "②", cap: "キット作成", pos: "50% 55%" },
+      { src: "photos/photo3.jpg", step: "③", cap: "動画コンテスト", pos: "55% 40%" }
     ]
   },
   {
