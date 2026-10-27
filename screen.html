@@ -16,7 +16,11 @@
   <p class="tiny" id="msg"></p>
 </main>
 <div id="count" class="count hidden"></div>
-<div id="lit" class="center hidden"><h1 id="title" class="title"></h1></div>
+<div id="lit" class="center hidden titlepage">
+  <h1 id="title" class="title"></h1>
+  <p id="subtitle" class="subtitle"></p>
+  <div class="byline"><p id="seminar"></p><p id="presenter"></p></div>
+</div>
 
 <div id="stage" class="stage hidden"><p id="missing" class="missing hidden"></p></div>
 
@@ -97,7 +101,7 @@ function playVideo(id) {
 }
 function stopVideo() { if (playing) { playing.pause(); playing = null; } }
 
-let lastMode = "", lastN = 0, lastVideo = null;
+let lastMode = "", lastN = 0, lastVideo = null, titleKey = "";
 function frame() {
   shown += (target - shown) * 0.12;
   if (Math.abs(target - shown) < 0.5) shown = target;
@@ -122,7 +126,9 @@ function frame() {
 
   if (p.mode === "lit") {
     document.body.style.background = state.color || "#ff3b6b";
-    if (lastMode !== "lit") revealTitle(state.title || "", p.since < 2000);
+    const key = [state.title, state.subtitle, state.presenter, state.seminar].join("\u0001");
+    if (lastMode !== "lit") { revealTitle(state, p.since < 2000); titleKey = key; }
+    else if (key !== titleKey) { revealTitle(state, false); titleKey = key; } // 表示中に内容を変更した場合
   } else {
     document.body.style.background = "";
   }
@@ -164,7 +170,8 @@ function frame() {
 requestAnimationFrame(frame);
 
 // タイトルを1文字ずつ浮かび上がらせる（タイトル画面に戻ったときはすぐ表示）
-function revealTitle(text, animate) {
+function revealTitle(st, animate) {
+  const text = st.title || "";
   const el = $("title");
   el.textContent = "";
   [...text].forEach((ch, i) => {
@@ -173,6 +180,15 @@ function revealTitle(text, animate) {
     s.style.animationDelay = animate ? (400 + i * 70) + "ms" : "0ms";
     if (!animate) s.style.animationDuration = "1ms";
     el.appendChild(s);
+  });
+  // 副題・ゼミ名・発表者はタイトルのあとにふわっと出す
+  const after = animate ? 400 + text.length * 70 + 300 : 0;
+  [["subtitle", 0], ["seminar", 250], ["presenter", 400]].forEach(([id, d]) => {
+    const e = $(id);
+    e.textContent = st[id] || "";
+    e.classList.remove("fadein"); void e.offsetWidth; e.classList.add("fadein");
+    e.style.animationDelay = (after + (animate ? d : 0)) + "ms";
+    e.style.animationDuration = animate ? "" : "1ms";
   });
 }
 </script>

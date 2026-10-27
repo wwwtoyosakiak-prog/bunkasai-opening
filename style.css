@@ -80,3 +80,12 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .closed{display:inline-block;font-size:.4em;vertical-align:middle;margin-left:.6em;padding:.3em .8em;border-radius:999px;background:#fff;color:#000}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .steps .btn{min-width:0;padding:12px 6px;font-size:14px}
+
+/* タイトル画面 */
+.titlepage{gap:0}
+.titlepage .subtitle{margin-top:3vh;font-size:clamp(20px,2.6vw,40px);font-weight:700;color:rgba(255,255,255,.92);padding:0 6vw;line-height:1.4}
+.titlepage .byline{position:absolute;left:0;right:0;bottom:8vh;display:flex;flex-direction:column;gap:.8vh;color:#fff}
+.titlepage .byline #seminar{font-size:clamp(16px,1.8vw,28px);font-weight:700;opacity:.85}
+.titlepage .byline #presenter{font-size:clamp(18px,2.2vw,34px);font-weight:900}
+.fadein{opacity:0;animation:fadeup .8s ease forwards}
+@keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}

@@ -24,11 +24,17 @@
     </div>
 
     <div class="card">
-      <label class="sub" for="titleIn">タイトル</label>
-      <input id="titleIn" type="text" placeholder="発表タイトル">
+      <label class="sub" for="titleIn">発表タイトル</label>
+      <input id="titleIn" type="text" placeholder="例：動画で子どもを呼び込む">
+      <label class="sub" for="subtitleIn">副題</label>
+      <input id="subtitleIn" type="text" placeholder="例：多摩祭2026 段ボールガチャワークショップの報告">
+      <label class="sub" for="presenterIn">発表者</label>
+      <input id="presenterIn" type="text" placeholder="例：青木公亮・〇〇〇〇">
+      <label class="sub" for="seminarIn">ゼミ名</label>
+      <input id="seminarIn" type="text" placeholder="例：多摩大学 経営情報学部 新西ゼミ">
       <span class="sub">光らせる色</span>
       <div class="swatches" id="sw"></div>
-      <button id="save" class="btn">タイトルと色を反映</button>
+      <button id="save" class="btn">タイトル画面の内容と色を反映</button>
     </div>
 
     <button id="go" class="btn primary go">3・2・1 スタート</button>
@@ -57,6 +63,7 @@ if (!configured) { setText($("msg"), "config.js が未設定です"); throw new 
 
 const COLORS = ["#ff3b6b", "#ff8a00", "#ffd60a", "#30d158", "#0a84ff", "#bf5af2", "#ffffff"];
 let color = COLORS[0], state = null;
+const FIELDS = [["title", "titleIn"], ["subtitle", "subtitleIn"], ["presenter", "presenterIn"], ["seminar", "seminarIn"]];
 
 COLORS.forEach(c => {
   const b = document.createElement("button");
@@ -92,7 +99,7 @@ onAuthStateChanged(auth, u => {
     });
     onValue(ref(db, "state"), s => {
       state = s.val();
-      if (state?.title && document.activeElement !== $("titleIn")) $("titleIn").value = state.title;
+      for (const [k, id] of FIELDS) if (state?.[k] != null && document.activeElement !== $(id)) $(id).value = state[k];
       if (state?.color) { color = state.color; paintSwatches(); }
     });
   }
@@ -107,8 +114,9 @@ function write(data) {
       : "反映できませんでした：" + e.message);
   });
 }
-$("save").onclick = () => write({ title: $("titleIn").value.trim(), color });
-$("go").onclick = () => write({ title: $("titleIn").value.trim(), color, phase: "go", startAt: Math.round(now() + 1500) });
+const fields = () => Object.fromEntries(FIELDS.map(([k, id]) => [k, $(id).value.trim()]));
+$("save").onclick = () => write({ ...fields(), color });
+$("go").onclick = () => write({ ...fields(), color, phase: "go", startAt: Math.round(now() + 1500) });
 $("reset").onclick = () => { if (confirm("待機画面に戻しますか？")) write({ phase: "waiting" }); };
 $("titleBtn").onclick = () => write({ phase: "title" });
 $("clearVotes").onclick = () => {
