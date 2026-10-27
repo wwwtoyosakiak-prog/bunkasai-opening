@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>操作パネル</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="control">
+<div class="wrap">
+  <p class="label">CONTROL</p>
+
+  <section id="login" class="card">
+    <p>発表者のGoogleアカウントでログインしてください。</p>
+    <button id="signin" class="btn primary">Googleでログイン</button>
+  </section>
+
+  <section id="panel" class="hidden" style="display:flex;flex-direction:column;gap:18px">
+    <div class="card">
+      <div class="row"><span class="sub">接続人数</span><span id="state" class="pill">待機中</span></div>
+      <div class="stat"><span id="n">0</span> 人</div>
+    </div>
+
+    <div class="card">
+      <label class="sub" for="titleIn">タイトル</label>
+      <input id="titleIn" type="text" placeholder="発表タイトル">
+      <span class="sub">光らせる色</span>
+      <div class="swatches" id="sw"></div>
+      <button id="save" class="btn">タイトルと色を反映</button>
+    </div>
+
+    <button id="go" class="btn primary go">3・2・1 スタート</button>
+    <button id="reset" class="btn danger">待機画面に戻す</button>
+    <p id="err" class="err"></p>
+
+    <div class="row"><span id="who" class="tiny"></span><button id="out" class="btn danger" style="min-width:0;padding:8px 14px;font-size:13px">ログアウト</button></div>
+  </section>
+  <p id="msg" class="tiny"></p>
+</div>
+
+<script type="module">
+import { db, auth, configured, now, phaseOf, setText } from "./common.js";
+import { ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const $ = id => document.getElementById(id);
+if (!configured) { setText($("msg"), "config.js が未設定です"); throw new Error("not configured"); }
+
+const COLORS = ["#ff3b6b", "#ff8a00", "#ffd60a", "#30d158", "#0a84ff", "#bf5af2", "#ffffff"];
+let color = COLORS[0], state = null;
+
+COLORS.forEach(c => {
+  const b = document.createElement("button");
+  b.className = "sw"; b.style.background = c; b.ariaLabel = c;
+  b.onclick = () => { color = c; paintSwatches(); };
+  $("sw").appendChild(b);
+});
+function paintSwatches() {
+  [...$("sw").children].forEach((b, i) => b.classList.toggle("sel", COLORS[i] === color));
+}
+paintSwatches();
+
+$("signin").onclick = async () => {
+  const provider = new GoogleAuthProvider();
+  try { await signInWithPopup(auth, provider); }
+  catch (e) { if (e.code === "auth/popup-blocked") signInWithRedirect(auth, provider); else setText($("msg"), "ログインに失敗しました：" + e.code); }
+};
+$("out").onclick = () => signOut(auth);
+
+let subscribed = false;
+onAuthStateChanged(auth, user => {
+  $("login").classList.toggle("hidden", !!user);
+  $("panel").classList.toggle("hidden", !user);
+  setText($("who"), user ? user.email : "");
+  if (user && !subscribed) {
+    subscribed = true;
+    onValue(ref(db, "presence"), s => setText($("n"), String(s.size)));
+    onValue(ref(db, "state"), s => {
+      state = s.val();
+      if (state?.title && document.activeElement !== $("titleIn")) $("titleIn").value = state.title;
+      if (state?.color) { color = state.color; paintSwatches(); }
+    });
+  }
+});
+
+// 書き込みはデータベースのルールで発表者アカウントだけに制限されている
+function write(data) {
+  setText($("err"), "");
+  return update(ref(db, "state"), data).catch(e => {
+    setText($("err"), e.code === "PERMISSION_DENIED" || /permission/i.test(e.message)
+      ? "このアカウントには操作権限がありません"
+      : "反映できませんでした：" + e.message);
+  });
+}
+$("save").onclick = () => write({ title: $("titleIn").value.trim(), color });
+$("go").onclick = () => write({ title: $("titleIn").value.trim(), color, phase: "go", startAt: Math.round(now() + 1500) });
+$("reset").onclick = () => { if (confirm("待機画面に戻しますか？")) write({ phase: "waiting" }); };
+
+const labels = { waiting: "待機中", ready: "まもなく", count: "カウント中", lit: "点灯中" };
+(function tick() {
+  const p = phaseOf(state);
+  setText($("state"), labels[p.mode]);
+  $("state").classList.toggle("on", p.mode !== "waiting");
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

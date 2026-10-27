@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>発表画面</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="screen">
+<main id="wait" class="center wait">
+  <div class="qrbox"><div id="qr"></div></div>
+  <p class="url" id="url"></p>
+  <p class="big"><span id="n">0</span><small>人が接続中</small></p>
+  <p class="tiny" id="msg"></p>
+</main>
+<div id="count" class="count hidden"></div>
+<div id="lit" class="center hidden"><h1 id="title" class="title"></h1></div>
+<div class="corner" id="corner"></div>
+
+<script type="module">
+import { db, configured, phaseOf, setText } from "./common.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const $ = id => document.getElementById(id);
+
+// 参加者用URL（このフォルダの index.html）をQRにする
+const joinURL = new URL("./", location.href).href;
+new QRCode($("qr"), { text: joinURL, width: 300, height: 300, correctLevel: QRCode.CorrectLevel.M });
+setText($("url"), joinURL.replace(/^https?:\/\//, "").replace(/\/$/, ""));
+
+if (!configured) { setText($("msg"), "config.js が未設定です"); throw new Error("not configured"); }
+
+let target = 0, shown = 0, state = null;
+onValue(ref(db, "presence"), s => { target = s.size; });
+onValue(ref(db, "state"), s => { state = s.val(); });
+
+let lastMode = "", lastN = 0;
+function frame() {
+  // 人数はなめらかにカウントアップ
+  shown += (target - shown) * 0.12;
+  if (Math.abs(target - shown) < 0.5) shown = target;
+  const n = Math.round(shown);
+  setText($("n"), String(n));
+
+  const p = phaseOf(state);
+  $("wait").classList.toggle("hidden", p.mode !== "waiting");
+  $("count").classList.toggle("hidden", !(p.mode === "count" || p.mode === "ready"));
+  $("lit").classList.toggle("hidden", p.mode !== "lit");
+  setText($("corner"), p.mode === "waiting" ? "" : `${n} 人が参加中`);
+
+  if (p.mode === "ready") setText($("count"), "");
+  if (p.mode === "count" && p.n !== lastN) {
+    const c = $("count");
+    c.textContent = p.n;
+    c.classList.remove("tick"); void c.offsetWidth; c.classList.add("tick");
+    lastN = p.n;
+  }
+  if (p.mode === "lit") {
+    document.body.style.background = state.color || "#ff3b6b";
+    if (lastMode !== "lit") revealTitle(state.title || "");
+  } else {
+    document.body.style.background = "";
+  }
+  if (p.mode !== "count") lastN = 0;
+  lastMode = p.mode;
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// タイトルを1文字ずつ浮かび上がらせる
+function revealTitle(text) {
+  const el = $("title");
+  el.textContent = "";
+  [...text].forEach((ch, i) => {
+    const s = document.createElement("span");
+    s.textContent = ch === " " ? " " : ch;
+    s.style.animationDelay = (400 + i * 70) + "ms";
+    el.appendChild(s);
+  });
+}
+</script>
+</body>
+</html>
