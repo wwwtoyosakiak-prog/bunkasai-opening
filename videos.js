@@ -4,7 +4,7 @@ export const VIDEOS = [
   {
     id: "v1",
     name: "1本目：動画コンテスト優勝作品",
-    src: "videos/video1.mp4",
+    src: "videos/video1.mp4?v=2",
     question: "この動画、面白かった？",
     yes: "面白かった",
     no: "面白くなかった",
@@ -13,8 +13,8 @@ export const VIDEOS = [
   },
   {
     id: "v2",
-    name: "2本目：出店場所の前で流した呼び込み動画",
-    src: "videos/video2.mp4",
+    name: "2本目：出店場所の前で流した呼び込み動画（冒頭25秒）",
+    src: "videos/video2.mp4?v=2",
     question: "これを見て、やってみたくなった？",
     yes: "やってみたい",
     no: "そうでもない",
