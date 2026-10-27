@@ -13,7 +13,7 @@ export const VIDEOS = [
   },
   {
     id: "v2",
-    name: "2本目：出店場所の前で流した呼び込み動画（冒頭25秒）",
+    name: "2本目：出店場所の前で流した呼び込み動画",
     src: "videos/video2.mp4?v=2",
     question: "これを見て、やってみたくなった？",
     yes: "やってみたい",
