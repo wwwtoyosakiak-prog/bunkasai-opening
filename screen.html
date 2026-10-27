@@ -61,10 +61,10 @@
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, auth, now, configured, phaseOf, setText, tally } from "./common.js?v=42";
-import { VIDEOS, videoById } from "./videos.js?v=42";
-import { SLIDES, renderRich } from "./slides.js?v=42";
-import { nextStep, prevStep, stepName } from "./steps.js?v=42";
+import { db, auth, now, configured, phaseOf, setText, tally } from "./common.js?v=43";
+import { VIDEOS, videoById } from "./videos.js?v=43";
+import { SLIDES, renderRich } from "./slides.js?v=43";
+import { nextStep, prevStep, stepName } from "./steps.js?v=43";
 import { update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -270,7 +270,7 @@ function showSlide(i, color) {
   });
   st.style.gridTemplateColumns = `repeat(${Math.max(1, (sl.stats || []).length)}, 1fr)`;
   st.classList.toggle("hidden", !(sl.stats || []).length);
-  $("slide").classList.toggle("dense", !!((sl.items || []).length >= 3 && (sl.lines || []).length && sl.heading));
+  $("slide").classList.toggle("dense", !!((sl.items || []).length >= 2 && (sl.lines || []).length && sl.heading && (sl.items.length >= 3 || sl.items.some(it => it.text.includes("\n")))));
   const sp = $("split");
   sp.classList.toggle("hidden", !sl.split);
   $("slide").classList.toggle("is-split", !!sl.split);
