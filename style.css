@@ -173,3 +173,5 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .pillar.withicon h3{font-size:clamp(24px,2.6vw,48px);margin-bottom:1vh}
 .pillar.withicon p{font-size:clamp(18px,1.9vw,34px)}
 .slide.enter .splitfig{animation:fadeup .6s ease both;animation-delay:.2s}
+.heading + .quote + .lines + .items, .heading ~ .items{margin-top:4.5vh}
+.heading ~ .items li{font-size:clamp(24px,3vw,54px)}
