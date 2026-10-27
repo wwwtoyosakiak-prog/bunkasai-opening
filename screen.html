@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=18">
+<link rel="stylesheet" href="style.css?v=19">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -31,6 +31,7 @@
   <ol id="items" class="items"></ol>
   <dl id="facts" class="facts"></dl>
   <div id="photos" class="photos"></div>
+  <figure id="figure" class="sfig hidden"><img alt=""><figcaption></figcaption></figure>
   <span id="pageNo" class="pageno"></span>
 </section>
 
@@ -52,9 +53,9 @@
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, configured, phaseOf, setText, tally } from "./common.js?v=18";
-import { VIDEOS, videoById } from "./videos.js?v=18";
-import { SLIDES, renderRich } from "./slides.js?v=18";
+import { db, configured, phaseOf, setText, tally } from "./common.js?v=19";
+import { VIDEOS, videoById } from "./videos.js?v=19";
+import { SLIDES, renderRich } from "./slides.js?v=19";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const $ = id => document.getElementById(id);
@@ -188,7 +189,7 @@ function frame() {
 requestAnimationFrame(frame);
 
 // 写真は先に読み込んでおく
-SLIDES.flatMap(sl => sl.photos || []).forEach(it => { const i = new Image(); i.src = it.src; });
+SLIDES.flatMap(sl => [...(sl.photos || []), ...(sl.figure ? [sl.figure] : [])]).forEach(it => { const i = new Image(); i.src = it.src; });
 
 // スライド表示（ページが変わったときだけ描き直す）
 let slideKey = "";
@@ -235,6 +236,10 @@ function showSlide(i, color) {
   });
   ph.classList.toggle("hidden", !(sl.photos || []).length);
   ph.classList.toggle("flow", !!sl.flow);
+  const fg = $("figure");
+  fg.classList.toggle("hidden", !sl.figure);
+  $("slide").classList.toggle("hasfig", !!sl.figure);
+  if (sl.figure) { fg.querySelector("img").src = sl.figure.src; fg.querySelector("figcaption").textContent = sl.figure.cap || ""; }
   setText($("pageNo"), String(i + 2));
   const sec = $("slide"); sec.classList.remove("enter"); void sec.offsetWidth; sec.classList.add("enter");
 }
