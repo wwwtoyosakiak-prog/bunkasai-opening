@@ -191,13 +191,14 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .stats + .lines{margin-top:4vh}
 .statcard .slabel{word-break:keep-all;overflow-wrap:anywhere}
 
-/* 発表画面の操作ボタン（マウスを動かしたときだけ表示） */
-.snav{position:fixed;right:24px;bottom:56px;z-index:20;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:999px;background:rgba(20,20,26,.88);border:1px solid #33333d;opacity:0;pointer-events:none;transition:opacity .3s}
+/* 発表画面の操作ボタン：左下の隅に小さく。マウスを左下に近づけたときだけ表示 */
+.snav{position:fixed;left:12px;bottom:12px;z-index:20;display:flex;align-items:center;gap:6px;padding:5px;border-radius:999px;background:rgba(20,20,26,.7);border:1px solid #2c2c35;opacity:0;pointer-events:none;transition:opacity .25s}
 .snav.show{opacity:1;pointer-events:auto}
-.navbtn{appearance:none;border:0;width:52px;height:52px;border-radius:50%;background:#2a2a33;color:#fff;font-size:20px;cursor:pointer}
+.navbtn{appearance:none;border:0;width:34px;height:34px;border-radius:50%;background:#2a2a33;color:#fff;font-size:13px;cursor:pointer}
 .navbtn:hover{background:var(--accent)}
-#snextBtn{background:var(--accent)}
-.navlabel{max-width:42vw;font-size:14px;font-weight:700;color:#d6d6de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#snextBtn{background:#3a3a46}
+.navlabel{max-width:0;overflow:hidden;white-space:nowrap;font-size:12px;font-weight:700;color:#cfcfd8;transition:max-width .25s}
+.snav:hover .navlabel,.snav.msg .navlabel{max-width:40vw;padding:0 4px}
 .slide .items li{font-size:clamp(22px,2.7vw,48px)}
 .slide.dense{padding-top:16vh}
 .slide.dense .heading{font-size:clamp(32px,4.4vw,80px)}

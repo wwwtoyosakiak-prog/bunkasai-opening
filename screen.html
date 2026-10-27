@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=38">
+<link rel="stylesheet" href="style.css?v=44">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -55,8 +55,8 @@
 <div class="corner" id="corner"></div>
 <nav id="nav" class="snav">
   <button id="sprev" class="navbtn" aria-label="戻る">◀</button>
-  <span id="snext" class="navlabel"></span>
   <button id="snextBtn" class="navbtn" aria-label="次へ">▶</button>
+  <span id="snext" class="navlabel"></span>
 </nav>
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
@@ -333,11 +333,12 @@ addEventListener("keydown", e => {
 // ボタンはマウスを動かしたときだけ表示し、しばらくすると隠れる（聴衆の邪魔にならないように）
 let hideTimer = 0;
 function showNav() { $("nav").classList.add("show"); clearTimeout(hideTimer); hideTimer = setTimeout(() => $("nav").classList.remove("show"), 2500); }
-addEventListener("mousemove", showNav);
+// 画面の左下（横30%・縦25%以内）にマウスが来たときだけ出す
+addEventListener("mousemove", e => { if (e.clientX < innerWidth * 0.3 && e.clientY > innerHeight * 0.75) showNav(); });
 addEventListener("touchstart", showNav, { passive: true });
 let flashUntil = 0;
 setInterval(() => { if (Date.now() > flashUntil) setText($("snext"), "次：" + stepName(nextStep(state))); }, 300);
-function flash(msg) { flashUntil = Date.now() + 3000; setText($("snext"), msg); showNav(); }
+function flash(msg) { flashUntil = Date.now() + 3000; setText($("snext"), msg); $("nav").classList.add("msg"); setTimeout(() => $("nav").classList.remove("msg"), 3000); showNav(); }
 </script>
 </body>
 </html>
