@@ -3,7 +3,7 @@
 export const VIDEOS = [
   {
     id: "v1",
-    name: "1本目：動画コンテストの作品",
+    name: "1本目：動画コンテスト優勝作品",
     src: "videos/video1.mp4",
     question: "この動画、面白かった？",
     yes: "面白かった",
