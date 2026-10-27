@@ -91,3 +91,20 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .titlepage .byline #presenter{font-size:clamp(24px,3.1vw,56px);font-weight:900;color:#fff}
 .fadein{opacity:0;animation:fadeup .8s ease forwards}
 @keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* スライド（発表画面）：濃い背景・大きな太字で後ろの席からも読める */
+.slide{position:fixed;inset:0;background:#0b0b0f;display:flex;flex-direction:column;justify-content:center;padding:8vh 8vw;--tc:#ff3b6b}
+.slide.enter .heading,.slide.enter .lines,.slide.enter .slidehead{animation:fadeup .6s ease both}
+.slide.enter .heading{animation-delay:.08s}
+.slide.enter .lines{animation-delay:.2s}
+.slidehead{position:absolute;top:7vh;left:8vw;display:flex;align-items:center;gap:1.2vw}
+.prep{display:inline-flex;align-items:center;justify-content:center;width:clamp(48px,5vw,92px);height:clamp(48px,5vw,92px);border-radius:18%;background:var(--tc);color:#fff;font-weight:900;font-size:clamp(28px,3.2vw,60px)}
+.tag{font-size:clamp(24px,2.8vw,50px);font-weight:900;color:#fff;letter-spacing:.06em}
+.heading{font-size:clamp(40px,6vw,112px);font-weight:900;line-height:1.3;color:#fff;letter-spacing:.01em}
+.heading em,.lines em,.slideh em{font-style:normal;color:var(--tc)}
+.lines{margin-top:5vh;display:flex;flex-direction:column;gap:1.6vh;border-left:clamp(6px,.6vw,12px) solid var(--tc);padding-left:2vw}
+.lines p{font-size:clamp(22px,2.8vw,50px);font-weight:700;color:#e4e4ec;line-height:1.45}
+.pageno{position:absolute;right:4vw;bottom:5vh;font-size:clamp(16px,1.6vw,28px);font-weight:700;color:#8a8a93;font-variant-numeric:tabular-nums}
+
+/* スライド（参加者のスマホ） */
+.slideh{font-size:26px;line-height:1.5;--tc:#ff3b6b}

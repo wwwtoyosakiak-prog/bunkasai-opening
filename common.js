@@ -17,7 +17,7 @@ export const COUNT_MS = 3000; // 3・2・1
 
 // 発表者が決めた state から、いま表示すべき場面を決める
 //  waiting: 開演前 / ready・count・lit: オープニング / title: タイトル表示
-//  video: 動画上映 / vote: 投票受付 / result: 投票結果
+//  slide: スライド / video: 動画上映 / vote: 投票受付 / result: 投票結果
 export function phaseOf(state) {
   if (!state) return { mode: "waiting" };
   switch (state.phase) {
@@ -28,6 +28,7 @@ export function phaseOf(state) {
       return { mode: "lit", since: t - COUNT_MS };
     }
     case "title": return { mode: "lit", since: Infinity };
+    case "slide": return { mode: "slide", slide: state.slide | 0 };
     case "video":
     case "vote":
     case "result": return { mode: state.phase, video: state.video };

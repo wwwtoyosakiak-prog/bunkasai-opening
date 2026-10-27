@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>操作パネル</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="control">
 <div class="wrap">
@@ -40,6 +40,16 @@
     <button id="go" class="btn primary go">3・2・1 スタート</button>
     <p id="err" class="err"></p>
 
+    <p class="label" style="margin-top:8px">スライド</p>
+    <div class="card">
+      <div class="row"><b id="slideNow">-</b><span id="slidePill" class="pill">-</span></div>
+      <div class="steps" style="grid-template-columns:1fr 1fr">
+        <button id="prev" class="btn">◀ 前へ</button>
+        <button id="next" class="btn primary">次へ ▶</button>
+      </div>
+      <div id="slideList" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
     <p class="label" style="margin-top:8px">動画と投票</p>
     <div id="videos" style="display:flex;flex-direction:column;gap:14px"></div>
 
@@ -53,8 +63,9 @@
 </div>
 
 <script type="module">
-import { db, auth, configured, now, phaseOf, setText, tally } from "./common.js";
-import { VIDEOS } from "./videos.js";
+import { db, auth, configured, now, phaseOf, setText, tally } from "./common.js?v=9";
+import { VIDEOS } from "./videos.js?v=9";
+import { SLIDES } from "./slides.js?v=9";
 import { ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -143,12 +154,30 @@ for (const v of VIDEOS) {
   setText(cards[v.id].tally, "まだ投票はありません");
 }
 
-const labels = { waiting: "待機中", ready: "まもなく", count: "カウント中", lit: "タイトル表示中", video: "上映中", vote: "投票受付中", result: "結果表示中" };
+// スライド操作：タイトル画面 → 2ページ目 → … の順に進む
+const goSlide = i => i < 0 ? write({ phase: "title" }) : write({ phase: "slide", slide: Math.min(i, SLIDES.length - 1) });
+const curSlide = () => { const p = phaseOf(state); return p.mode === "slide" ? p.slide : -1; };
+$("next").onclick = () => goSlide(curSlide() + 1);
+$("prev").onclick = () => goSlide(curSlide() - 1);
+const slideBtns = SLIDES.map((sl, i) => {
+  const b = document.createElement("button");
+  b.className = "btn"; b.style.cssText = "min-width:0;padding:10px 14px;font-size:14px;text-align:left";
+  b.textContent = `${i + 2}. ${sl.prep}｜${sl.tag}`;
+  b.onclick = () => goSlide(i);
+  $("slideList").appendChild(b);
+  return b;
+});
+
+const labels = { slide: "スライド表示中", waiting: "待機中", ready: "まもなく", count: "カウント中", lit: "タイトル表示中", video: "上映中", vote: "投票受付中", result: "結果表示中" };
 const steps = { video: "上映中", vote: "投票受付中", result: "結果表示中" };
 (function tick() {
   const p = phaseOf(state);
   setText($("state"), labels[p.mode]);
   $("state").classList.toggle("on", p.mode !== "waiting");
+  const cs = p.mode === "slide" ? p.slide : -1;
+  setText($("slideNow"), cs >= 0 ? `${cs + 2}ページ目：${SLIDES[cs].prep}｜${SLIDES[cs].tag}` : (p.mode === "lit" ? "1ページ目：タイトル" : "-"));
+  setText($("slidePill"), `${cs >= 0 ? cs + 2 : (p.mode === "lit" ? 1 : "-")} / ${SLIDES.length + 1}`);
+  slideBtns.forEach((b, i) => b.classList.toggle("primary", i === cs));
   for (const [id, c] of Object.entries(cards)) {
     const active = p.video === id;
     setText(c.pill, active ? steps[p.mode] : "-");

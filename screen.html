@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -22,6 +22,13 @@
   <p id="subtitle" class="subtitle"></p>
   <div class="byline"><p id="seminar"></p><p id="presenter"></p></div>
 </div>
+
+<section id="slide" class="slide hidden">
+  <div class="slidehead"><span id="prep" class="prep"></span><span id="tag" class="tag"></span></div>
+  <h2 id="heading" class="heading"></h2>
+  <div id="lines" class="lines"></div>
+  <span id="pageNo" class="pageno"></span>
+</section>
 
 <div id="stage" class="stage hidden"><p id="missing" class="missing hidden"></p></div>
 
@@ -41,8 +48,9 @@
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, configured, phaseOf, setText, tally } from "./common.js";
-import { VIDEOS, videoById } from "./videos.js";
+import { db, configured, phaseOf, setText, tally } from "./common.js?v=9";
+import { VIDEOS, videoById } from "./videos.js?v=9";
+import { SLIDES, renderRich } from "./slides.js?v=9";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const $ = id => document.getElementById(id);
@@ -114,8 +122,10 @@ function frame() {
   $("count").classList.toggle("hidden", !(p.mode === "count" || p.mode === "ready"));
   $("lit").classList.toggle("hidden", p.mode !== "lit");
   $("stage").classList.toggle("hidden", p.mode !== "video");
+  $("slide").classList.toggle("hidden", p.mode !== "slide");
+  if (p.mode === "slide") showSlide(p.slide, state.color || "#ff3b6b");
   $("poll").classList.toggle("hidden", !(p.mode === "vote" || p.mode === "result"));
-  setText($("corner"), p.mode === "waiting" || p.mode === "video" ? "" : `${n} 人が参加中`);
+  setText($("corner"), p.mode === "waiting" || p.mode === "video" || p.mode === "slide" ? "" : `${n} 人が参加中`);
 
   if (p.mode === "ready") setText($("count"), "");
   if (p.mode === "count" && p.n !== lastN) {
@@ -172,6 +182,23 @@ function frame() {
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
+
+// スライド表示（ページが変わったときだけ描き直す）
+let slideKey = "";
+function showSlide(i, color) {
+  const sl = SLIDES[i]; if (!sl) return;
+  const key = i + color;
+  if (key === slideKey) return;
+  slideKey = key;
+  $("slide").style.setProperty("--tc", color);
+  setText($("prep"), sl.prep);
+  setText($("tag"), sl.tag);
+  renderRich($("heading"), sl.heading);
+  const box = $("lines"); box.textContent = "";
+  (sl.lines || []).forEach(t => { const e = document.createElement("p"); renderRich(e, t); box.appendChild(e); });
+  setText($("pageNo"), String(i + 2));
+  const sec = $("slide"); sec.classList.remove("enter"); void sec.offsetWidth; sec.classList.add("enter");
+}
 
 // タイトルを1文字ずつ浮かび上がらせる（タイトル画面に戻ったときはすぐ表示）
 function revealTitle(st, animate) {

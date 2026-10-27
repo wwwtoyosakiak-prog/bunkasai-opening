@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#000000">
 <title>参加ページ</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="participant">
 <main id="wait" class="center">
@@ -36,6 +36,11 @@
   <p id="voteMsg" class="sub"></p>
 </main>
 
+<main id="slideView" class="center hidden">
+  <p class="label" id="slideTag"></p>
+  <h1 id="slideHeading" class="slideh"></h1>
+</main>
+
 <main id="result" class="center hidden">
   <p class="label">RESULT</p>
   <h1>投票ありがとうございました</h1>
@@ -44,8 +49,9 @@
 </main>
 
 <script type="module">
-import { db, auth, configured, phaseOf, setText } from "./common.js";
-import { videoById } from "./videos.js";
+import { db, auth, configured, phaseOf, setText } from "./common.js?v=9";
+import { videoById } from "./videos.js?v=9";
+import { SLIDES, renderRich } from "./slides.js?v=9";
 import { ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -106,11 +112,20 @@ function paintVote() {
   setText($("voteMsg"), mine ? "投票しました（締め切りまで変更できます）" : "どちらかをタップしてください");
 }
 
-let lastMode = "", lastN = 0;
+let lastMode = "", lastN = 0, lastSlide = -1;
 function frame() {
   const p = phaseOf(state);
   for (const id of ["video", "vote", "result"]) $(id).classList.toggle("hidden", p.mode !== id);
   $("wait").classList.toggle("hidden", p.mode !== "waiting");
+  $("slideView").classList.toggle("hidden", p.mode !== "slide");
+  if (p.mode === "slide" && SLIDES[p.slide] && lastSlide !== p.slide) {
+    lastSlide = p.slide;
+    const sl = SLIDES[p.slide];
+    setText($("slideTag"), `${sl.prep}｜${sl.tag}`);
+    renderRich($("slideHeading"), sl.heading);
+    $("slideView").style.setProperty("--tc", state.color || "#ff3b6b");
+  }
+  if (p.mode !== "slide") lastSlide = -1;
   $("count").classList.toggle("hidden", !(p.mode === "count" || p.mode === "ready"));
   $("lit").classList.toggle("hidden", p.mode !== "lit");
 
