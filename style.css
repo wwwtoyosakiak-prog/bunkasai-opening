@@ -84,7 +84,7 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 /* タイトル画面 */
 .titlepage{gap:0}
 .titlepage .subtitle{margin-top:3vh;font-size:clamp(20px,2.6vw,40px);font-weight:700;color:rgba(255,255,255,.92);padding:0 6vw;line-height:1.4}
-.titlepage .byline{position:absolute;left:0;right:0;bottom:8vh;display:flex;flex-direction:column;gap:.8vh;color:#fff}
+.titlepage .byline{position:absolute;left:0;right:0;bottom:12vh;display:flex;flex-direction:column;gap:.8vh;color:#fff}
 .titlepage .byline #seminar{font-size:clamp(16px,1.8vw,28px);font-weight:700;opacity:.85}
 .titlepage .byline #presenter{font-size:clamp(18px,2.2vw,34px);font-weight:900}
 .fadein{opacity:0;animation:fadeup .8s ease forwards}
