@@ -94,7 +94,7 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 
 /* スライド（発表画面）：濃い背景・大きな太字で後ろの席からも読める */
 .slide{position:fixed;inset:0;background:#0b0b0f;display:flex;flex-direction:column;justify-content:center;padding:18vh 8vw 10vh;--tc:#ff3b6b}
-.slide.enter .heading,.slide.enter .lines,.slide.enter .slidehead,.slide.enter .quote,.slide.enter .items,.slide.enter .facts{animation:fadeup .6s ease both}
+.slide.enter .heading,.slide.enter .lines,.slide.enter .slidehead,.slide.enter .quote,.slide.enter .items,.slide.enter .facts,.slide.enter .photos{animation:fadeup .6s ease both}
 .slide.enter .quote{animation-delay:.5s}
 .slide.enter .lines{animation-delay:.9s}
 .slide.enter .heading{animation-delay:.08s}
@@ -123,3 +123,10 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .facts dt{font-size:clamp(20px,2.4vw,42px);font-weight:900;color:var(--tc);white-space:nowrap}
 .facts dd{font-size:clamp(24px,3vw,54px);font-weight:900;color:#fff;line-height:1.35}
 .facts dd em{font-style:normal;color:var(--tc)}
+
+/* 当日の写真：1枚を大きく、2枚を右に重ねる */
+.photos{display:grid;grid-template-columns:1.55fr 1fr;grid-template-rows:1fr 1fr;gap:1.4vw;height:64vh;margin-top:1vh}
+.photos figure{position:relative;margin:0;overflow:hidden;border-radius:14px;background:#17171b}
+.photos figure:first-child{grid-row:1 / span 2}
+.photos img{width:100%;height:100%;object-fit:cover;display:block}
+.photos figcaption{position:absolute;left:0;right:0;bottom:0;padding:3vh 1.4vw 1.6vh;background:linear-gradient(transparent,rgba(0,0,0,.82));color:#fff;font-weight:900;font-size:clamp(16px,1.7vw,30px);line-height:1.35}

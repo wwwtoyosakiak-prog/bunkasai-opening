@@ -26,6 +26,15 @@ export const SLIDES = [
     ]
   },
   {
+    prep: "",
+    tag: "当日の様子",
+    photos: [
+      { src: "photos/photo1.jpg", cap: "アリーナのテントで、親子で工作" },
+      { src: "photos/photo2.jpg", cap: "紙芝居とクイズで、環境と福祉を学ぶ" },
+      { src: "photos/photo3.jpg", cap: "共用画面では動画を上映" }
+    ]
+  },
+  {
     prep: "P",
     tag: "結論",
     heading: "動画で**楽しさ**を見せると\n子どもは**参加したくなる**",
