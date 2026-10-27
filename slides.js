@@ -19,10 +19,10 @@ export const SLIDES = [
     prep: "",
     tag: "そもそも、ペパポンとは？",
     heading: "**段ボール**でできたガチャガチャ",
-    figure: { src: "photos/capsule.jpg?v=1", cap: "段ボールのカプセル", fit: "contain" },
+    split: { src: "photos/lineup.jpg?v=1", cap: "ガチャ本体もカプセルも、すべて段ボール" },
     pillars: [
-      { title: "環境", text: "段ボールのリサイクル率は**ほぼ100％**。使い終わっても資源に戻る" },
-      { title: "福祉", text: "カプセルの組み立てを**福祉作業所**に依頼。障がいのある人の仕事につながる" }
+      { icon: "photos/sdg12.png?v=1", title: "環境に貢献", text: "段ボールのリサイクル率は**ほぼ100％**" },
+      { icon: "photos/sdg8.png?v=1", title: "社会に貢献", text: "カプセルの組み立てを**福祉作業所**に依頼し、障がいのある人の仕事に" }
     ]
   },
   {

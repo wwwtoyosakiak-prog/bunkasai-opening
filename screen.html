@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=25">
+<link rel="stylesheet" href="style.css?v=26">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -30,6 +30,7 @@
   <ol id="items" class="items"></ol>
   <dl id="facts" class="facts"></dl>
   <div id="photos" class="photos"></div>
+  <figure id="split" class="splitfig hidden"><img alt=""><figcaption></figcaption></figure>
   <div id="pillars" class="pillars"></div>
   <div id="lines" class="lines"></div>
   <figure id="figure" class="sfig hidden"><img alt=""><figcaption></figcaption></figure>
@@ -54,9 +55,9 @@
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, configured, phaseOf, setText, tally } from "./common.js?v=25";
-import { VIDEOS, videoById } from "./videos.js?v=25";
-import { SLIDES, renderRich } from "./slides.js?v=25";
+import { db, configured, phaseOf, setText, tally } from "./common.js?v=26";
+import { VIDEOS, videoById } from "./videos.js?v=26";
+import { SLIDES, renderRich } from "./slides.js?v=26";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const $ = id => document.getElementById(id);
@@ -190,7 +191,7 @@ function frame() {
 requestAnimationFrame(frame);
 
 // 写真は先に読み込んでおく
-SLIDES.flatMap(sl => [...(sl.photos || []), ...(sl.figure ? [sl.figure] : [])]).forEach(it => { const i = new Image(); i.src = it.src; });
+SLIDES.flatMap(sl => [...(sl.photos || []), ...(sl.figure ? [sl.figure] : []), ...(sl.split ? [sl.split] : []), ...(sl.pillars || []).filter(p => p.icon).map(p => ({ src: p.icon }))]).forEach(it => { const i = new Image(); i.src = it.src; });
 
 // スライド表示（ページが変わったときだけ描き直す）
 let slideKey = "";
@@ -242,9 +243,18 @@ function showSlide(i, color) {
     const d = document.createElement("div"); d.className = "pillar";
     const h = document.createElement("h3"); h.textContent = it.title;
     const t = document.createElement("p"); renderRich(t, it.text);
-    d.append(h, t); pl.appendChild(d);
+    if (it.icon) {
+      const ic = document.createElement("img"); ic.src = it.icon; ic.alt = ""; ic.className = "picon";
+      const body = document.createElement("div"); body.append(h, t);
+      d.classList.add("withicon"); d.append(ic, body);
+    } else d.append(h, t);
+    pl.appendChild(d);
   });
   pl.classList.toggle("hidden", !(sl.pillars || []).length);
+  const sp = $("split");
+  sp.classList.toggle("hidden", !sl.split);
+  $("slide").classList.toggle("is-split", !!sl.split);
+  if (sl.split) { sp.querySelector("img").src = sl.split.src; sp.querySelector("figcaption").textContent = sl.split.cap || ""; }
   const fg = $("figure");
   fg.classList.toggle("hidden", !sl.figure);
   $("slide").classList.toggle("hasfig", !!sl.figure);
