@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>操作パネル</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body class="control">
 <div class="wrap">
@@ -63,9 +63,9 @@
 </div>
 
 <script type="module">
-import { db, auth, configured, now, phaseOf, setText, tally } from "./common.js?v=9";
-import { VIDEOS } from "./videos.js?v=9";
-import { SLIDES } from "./slides.js?v=9";
+import { db, auth, configured, now, phaseOf, setText, tally } from "./common.js?v=11";
+import { VIDEOS } from "./videos.js?v=11";
+import { SLIDES } from "./slides.js?v=11";
 import { ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -162,7 +162,7 @@ $("prev").onclick = () => goSlide(curSlide() - 1);
 const slideBtns = SLIDES.map((sl, i) => {
   const b = document.createElement("button");
   b.className = "btn"; b.style.cssText = "min-width:0;padding:10px 14px;font-size:14px;text-align:left";
-  b.textContent = `${i + 2}. ${sl.prep}｜${sl.tag}`;
+  b.textContent = `${i + 2}. ${sl.prep ? sl.prep + "｜" : ""}${sl.tag}`;
   b.onclick = () => goSlide(i);
   $("slideList").appendChild(b);
   return b;
@@ -175,7 +175,7 @@ const steps = { video: "上映中", vote: "投票受付中", result: "結果表�
   setText($("state"), labels[p.mode]);
   $("state").classList.toggle("on", p.mode !== "waiting");
   const cs = p.mode === "slide" ? p.slide : -1;
-  setText($("slideNow"), cs >= 0 ? `${cs + 2}ページ目：${SLIDES[cs].prep}｜${SLIDES[cs].tag}` : (p.mode === "lit" ? "1ページ目：タイトル" : "-"));
+  setText($("slideNow"), cs >= 0 ? `${cs + 2}ページ目：${SLIDES[cs].prep ? SLIDES[cs].prep + "｜" : ""}${SLIDES[cs].tag}` : (p.mode === "lit" ? "1ページ目：タイトル" : "-"));
   setText($("slidePill"), `${cs >= 0 ? cs + 2 : (p.mode === "lit" ? 1 : "-")} / ${SLIDES.length + 1}`);
   slideBtns.forEach((b, i) => b.classList.toggle("primary", i === cs));
   for (const [id, c] of Object.entries(cards)) {

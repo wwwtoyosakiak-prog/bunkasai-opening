@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#000000">
 <title>参加ページ</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body class="participant">
 <main id="wait" class="center">
@@ -49,9 +49,9 @@
 </main>
 
 <script type="module">
-import { db, auth, configured, phaseOf, setText } from "./common.js?v=9";
-import { videoById } from "./videos.js?v=9";
-import { SLIDES, renderRich } from "./slides.js?v=9";
+import { db, auth, configured, phaseOf, setText } from "./common.js?v=11";
+import { videoById } from "./videos.js?v=11";
+import { SLIDES, renderRich } from "./slides.js?v=11";
 import { ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -121,8 +121,8 @@ function frame() {
   if (p.mode === "slide" && SLIDES[p.slide] && lastSlide !== p.slide) {
     lastSlide = p.slide;
     const sl = SLIDES[p.slide];
-    setText($("slideTag"), `${sl.prep}｜${sl.tag}`);
-    renderRich($("slideHeading"), sl.heading);
+    setText($("slideTag"), sl.prep ? `${sl.prep}｜${sl.tag}` : sl.tag);
+    renderRich($("slideHeading"), sl.heading || (sl.items || []).map(it => `${it.prep}　${it.text}`).join("\n"));
     $("slideView").style.setProperty("--tc", state.color || "#ff3b6b");
   }
   if (p.mode !== "slide") lastSlide = -1;
