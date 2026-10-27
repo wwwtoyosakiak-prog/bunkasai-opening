@@ -159,3 +159,4 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .pillar p em{font-style:normal;color:var(--tc)}
 .slide.enter .pillars{animation-delay:.35s}
 .facts + .lines{margin-top:4vh}
+.sfig img.contain{object-fit:contain;background:#fff}

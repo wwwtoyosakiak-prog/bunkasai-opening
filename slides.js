@@ -19,7 +19,7 @@ export const SLIDES = [
     prep: "",
     tag: "そもそも、ペパポンとは？",
     heading: "**段ボール**でできたガチャガチャ",
-    figure: { src: "photos/kit.jpg?v=2", cap: "本体もカプセルも段ボール" },
+    figure: { src: "photos/capsule.jpg?v=1", cap: "段ボールのカプセル", fit: "contain" },
     pillars: [
       { title: "環境", text: "段ボールのリサイクル率は**ほぼ100％**。使い終わっても資源に戻る" },
       { title: "福祉", text: "カプセルの組み立てを**福祉作業所**に依頼。障がいのある人の仕事につながる" }
@@ -41,6 +41,7 @@ export const SLIDES = [
   {
     prep: "",
     tag: "活動の概要",
+    figure: { src: "photos/kit.jpg?v=2", cap: "完成した段ボールガチャ" },
     facts: [
       ["いつ", "2026年10月24日（土）　**多摩祭2026**"],
       ["どこで", "多摩大学 多摩キャンパス　アリーナ17番"],
