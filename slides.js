@@ -143,7 +143,7 @@ export const SLIDES = [
     heading: "来場した**親子**が審査員に",
     stats: [
       { num: "9", unit: "作品", label: "学生が制作" },
-      { num: "87", unit: "人", label: "子どもと保護者が投票" },
+      { num: "87", unit: "人", label: "親子が投票" },
       { num: "778", unit: "票", label: "総投票数" },
       { num: "72.8", unit: "%", label: "「面白かった」" }
     ],
