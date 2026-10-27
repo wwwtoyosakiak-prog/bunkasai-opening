@@ -94,7 +94,9 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 
 /* スライド（発表画面）：濃い背景・大きな太字で後ろの席からも読める */
 .slide{position:fixed;inset:0;background:#0b0b0f;display:flex;flex-direction:column;justify-content:center;padding:8vh 8vw;--tc:#ff3b6b}
-.slide.enter .heading,.slide.enter .lines,.slide.enter .slidehead{animation:fadeup .6s ease both}
+.slide.enter .heading,.slide.enter .lines,.slide.enter .slidehead,.slide.enter .quote,.slide.enter .items{animation:fadeup .6s ease both}
+.slide.enter .quote{animation-delay:.5s}
+.slide.enter .lines{animation-delay:.9s}
 .slide.enter .heading{animation-delay:.08s}
 .slide.enter .lines{animation-delay:.2s}
 .slidehead{position:absolute;top:7vh;left:8vw;display:flex;align-items:center;gap:1.2vw}
@@ -113,3 +115,6 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .items{list-style:none;display:flex;flex-direction:column;gap:3.2vh;margin-top:4vh}
 .items li{display:flex;align-items:center;gap:2vw;font-size:clamp(26px,3.4vw,62px);font-weight:900;color:#fff;line-height:1.3}
 .items .prep{flex:none}
+
+/* 子どもの声などの引用 */
+.quote{margin-top:4vh;font-size:clamp(36px,5.4vw,100px);font-weight:900;line-height:1.3;color:var(--tc)}

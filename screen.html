@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=12">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -26,6 +26,7 @@
 <section id="slide" class="slide hidden">
   <div class="slidehead"><span id="prep" class="prep"></span><span id="tag" class="tag"></span></div>
   <h2 id="heading" class="heading"></h2>
+  <p id="quote" class="quote"></p>
   <div id="lines" class="lines"></div>
   <ol id="items" class="items"></ol>
   <span id="pageNo" class="pageno"></span>
@@ -49,9 +50,9 @@
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, configured, phaseOf, setText, tally } from "./common.js?v=11";
-import { VIDEOS, videoById } from "./videos.js?v=11";
-import { SLIDES, renderRich } from "./slides.js?v=11";
+import { db, configured, phaseOf, setText, tally } from "./common.js?v=12";
+import { VIDEOS, videoById } from "./videos.js?v=12";
+import { SLIDES, renderRich } from "./slides.js?v=12";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const $ = id => document.getElementById(id);
@@ -197,6 +198,8 @@ function showSlide(i, color) {
   setText($("tag"), sl.tag);
   renderRich($("heading"), sl.heading);
   $("heading").classList.toggle("hidden", !sl.heading);
+  renderRich($("quote"), sl.quote);
+  $("quote").classList.toggle("hidden", !sl.quote);
   const box = $("lines"); box.textContent = "";
   (sl.lines || []).forEach(t => { const e = document.createElement("p"); renderRich(e, t); box.appendChild(e); });
   box.classList.toggle("hidden", !(sl.lines || []).length);
