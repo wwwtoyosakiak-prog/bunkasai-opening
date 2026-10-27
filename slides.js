@@ -27,11 +27,12 @@ export const SLIDES = [
   },
   {
     prep: "",
-    tag: "当日の様子",
+    tag: "当日の様子　ワークショップの流れ",
+    flow: true,
     photos: [
-      { src: "photos/photo1.jpg", cap: "アリーナのテントで、親子で工作" },
-      { src: "photos/photo2.jpg", cap: "紙芝居とクイズで、環境と福祉を学ぶ" },
-      { src: "photos/photo3.jpg", cap: "共用画面では動画を上映" }
+      { src: "photos/photo2.jpg", step: "①", cap: "紙芝居・クイズ", pos: "45% 50%" },
+      { src: "photos/photo1.jpg", step: "②", cap: "キット作成", pos: "45% 60%" },
+      { src: "photos/photo3.jpg", step: "③", cap: "動画コンテスト", pos: "60% 35%" }
     ]
   },
   {
