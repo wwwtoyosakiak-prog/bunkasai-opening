@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=37">
+<link rel="stylesheet" href="style.css?v=38">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -270,6 +270,7 @@ function showSlide(i, color) {
   });
   st.style.gridTemplateColumns = `repeat(${Math.max(1, (sl.stats || []).length)}, 1fr)`;
   st.classList.toggle("hidden", !(sl.stats || []).length);
+  $("slide").classList.toggle("dense", !!((sl.items || []).length >= 3 && (sl.lines || []).length && sl.heading));
   const sp = $("split");
   sp.classList.toggle("hidden", !sl.split);
   $("slide").classList.toggle("is-split", !!sl.split);
