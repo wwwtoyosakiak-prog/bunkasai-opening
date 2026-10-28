@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>発表画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=46">
+<link rel="stylesheet" href="style.css?v=47">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="screen">
@@ -61,10 +61,10 @@
 <button id="unlock" class="btn unlock">🔊 クリックして音声を有効にする</button>
 
 <script type="module">
-import { db, auth, now, configured, phaseOf, setText, tally } from "./common.js?v=46";
-import { VIDEOS, videoById } from "./videos.js?v=46";
-import { SLIDES, renderRich } from "./slides.js?v=46";
-import { nextStep, prevStep, stepName } from "./steps.js?v=46";
+import { db, auth, now, configured, phaseOf, setText, tally } from "./common.js?v=47";
+import { VIDEOS, videoById } from "./videos.js?v=47";
+import { SLIDES, renderRich } from "./slides.js?v=47";
+import { nextStep, prevStep, stepName } from "./steps.js?v=47";
 import { update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
