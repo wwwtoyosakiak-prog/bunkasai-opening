@@ -220,7 +220,7 @@ section("導入");
   const s = pres.addSlide({ masterName: "TITLE", sectionTitle: "導入" });
   s.addText("動画で子どもを呼び込む", { placeholder: "title" });
   s.addText("多摩祭2026 段ボールガチャワークショップの報告", { placeholder: "subtitle" });
-  s.addText([{ text: "多摩大学 経営情報学部 新西ゼミ", options: { fontSize: 16, color: SUB, breakLine: true } }, { text: "（発表者名）", options: { fontSize: 20 } }], { placeholder: "byline" });
+  s.addText([{ text: "多摩大学 経営情報学部 新西ゼミ", options: { fontSize: 16, color: SUB, breakLine: true } }, { text: "3年　金彌 寛大・丹伊田 一輝・池森 和真", options: { fontSize: 20 } }], { placeholder: "byline" });
 }
 
 // PowerPointの幅に合わせて改行位置だけ調整する文言
@@ -239,20 +239,50 @@ for (const raw of SLIDES) {
   const X = 0.5, W = 9;
   let y = 1.0;
 
-  if (sl.split) { // ペパポンとは
-    y = heading(s, sl.heading, X, y, W, 30) + 0.25;
-    const bh = 5.2 - y;
-    const [iw, ih] = fitBox(1288, 710, 4.6, bh);
-    framedImage(s, A + "lineup_r_d.jpg", X + (4.6 - iw) / 2, y, iw, ih, sl.split.cap, true);
-    const px = 5.45, pw = 4.05, ph = (bh - 0.2) / 2;
+  if (sl.split) { // ペパポンとは：見出しの下を左右2列で上下いっぱいに使う
+    heading(s, sl.heading, X, 1.0, W, 30);
+    const top = 1.85, bot = 5.1, bh = bot - top;
+    // 左：白いカードの中に製品写真と説明
+    const lw = 4.7;
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: top, w: lw, h: bh, rectRadius: 0.14, fill: { color: "FFFFFF" }, line: { color: ACC, width: 2.5 }, objectName: on("lineup-card") });
+    const [iw, ih] = fitBox(1200, 622, lw - 0.4, bh - 0.75);
+    s.addImage({ path: A + "lineup.jpg", x: X + (lw - iw) / 2, y: top + 0.2 + (bh - 0.75 - ih) / 2, w: iw, h: ih, altText: sl.split.cap, objectName: on("lineup") });
+    s.addText(sl.split.cap, { x: X + 0.2, y: bot - 0.55, w: lw - 0.4, h: 0.4, fontSize: 15, bold: true, color: C.text1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("lineup-cap") });
+    // 右：環境・社会への貢献（上下に均等）
+    const px = X + lw + 0.3, pw = 9.5 - px, gap = 0.25, ph = (bh - gap) / 2;
     sl.pillars.forEach((p, i) => {
-      const py = y - 0.05 + i * (ph + 0.2);
+      const py = top + i * (ph + gap);
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: px, y: py, w: pw, h: ph, rectRadius: 0.12, fill: { color: CARD }, line: { color: ACC, width: 2 }, objectName: on("pillar") });
-      const icon = A + p.icon.split("/").pop().split("?")[0];
-      s.addImage({ path: icon, x: px + 0.18, y: py + (ph - 1.0) / 2, w: 1.0, h: 1.0, altText: p.title, objectName: on("sdg") });
-      s.addText(p.title, { x: px + 1.35, y: py + 0.14, w: pw - 1.5, h: 0.42, fontSize: 20, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("pillar-h") });
-      s.addText(rich(p.text, { fontSize: 14, bold: true, color: WHITE }), { x: px + 1.35, y: py + 0.56, w: pw - 1.45, h: ph - 0.62, margin: 0, valign: "top", isTextBox: true, objectName: on("pillar-t") });
+      const icon = A + p.icon.split("/").pop().split("?")[0], isz = 1.05;
+      s.addImage({ path: icon, x: px + 0.2, y: py + (ph - isz) / 2, w: isz, h: isz, altText: p.title, objectName: on("sdg") });
+      s.addText([
+        { text: p.title, options: { fontSize: 20, bold: true, color: ACC, breakLine: true } },
+        ...rich(p.text, { fontSize: 14, bold: true, color: WHITE })
+      ], { x: px + 0.2 + isz + 0.2, y: py + 0.12, w: pw - isz - 0.55, h: ph - 0.24, margin: 0, valign: "middle", paraSpaceBefore: 2, isTextBox: true, objectName: on("pillar-t") });
     });
+    continue;
+  }
+
+  if (sl.tag === "新西ゼミ × ペパポン　連携の取り組み") { // 年表：横いっぱいのタイムライン＋下に企業からの依頼
+    const TL = {
+      "2024": "多摩祭で\nSDGsブースを出展\n来場**79人**\n販売**46台**",
+      "2025": "子ども向け\nワークショップを企画\n満足度**100％**",
+      "2026": "今回の多摩祭で\nワークショップ\n＋動画コンテスト"
+    };
+    const n = sl.facts.length, gap = 0.3, cw = (W - gap * (n - 1)) / n;
+    const lineY = 1.32;
+    s.addShape(pres.shapes.LINE, { x: X + cw / 2, y: lineY, w: W - cw, h: 0, line: { color: ACC, width: 3 }, objectName: on("tl-line") });
+    sl.facts.forEach(([yr], i) => {
+      const x = X + i * (cw + gap), last = i === n - 1;
+      s.addShape(pres.shapes.OVAL, { x: x + cw / 2 - 0.17, y: lineY - 0.17, w: 0.34, h: 0.34, fill: { color: last ? ACC : C.text1 }, line: { color: ACC, width: 3 }, objectName: on("tl-dot") });
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 1.7, w: cw, h: 2.3, rectRadius: 0.14, fill: { color: last ? ACC : CARD }, line: { color: last ? ACC : LINE, width: 1.5 }, objectName: on("tl-card") });
+      s.addText(yr, { x: x + 0.25, y: 1.85, w: cw - 0.5, h: 0.6, fontSize: 32, bold: true, color: last ? WHITE : ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("tl-year") });
+      s.addText(rich(TL[yr], { fontSize: 16, bold: true, color: WHITE }, last ? WHITE : ACC), { x: x + 0.25, y: 2.5, w: cw - 0.5, h: 1.4, margin: 0, valign: "top", lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("tl-text") });
+    });
+    const [label, body] = sl.lines[0].split("\n");
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: 4.3, w: W, h: 0.85, rectRadius: 0.12, fill: { color: CARD }, line: { color: GOLD, width: 1.5 }, objectName: on("request") });
+    s.addText(label.replace(/：$/, ""), { x: X + 0.3, y: 4.3, w: 2.0, h: 0.85, fontSize: 16, bold: true, color: GOLD, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-k") });
+    s.addText(body, { x: X + 2.3, y: 4.3, w: W - 2.6, h: 0.85, fontSize: 18, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-v") });
     continue;
   }
 
