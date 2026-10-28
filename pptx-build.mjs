@@ -182,7 +182,12 @@ function heroSlide(s, sl) {
     });
     if (li < arr.length - 1) runs[runs.length - 1].options.breakLine = true;
   });
-  if (sl.items[0].kizuki) return summarySlide(s, sl, runs);
+  if (!sl.items) { // 最後のまとめ：結論の一文だけを大きく
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 1.15, w: 9, h: 2.6, rectRadius: 0.18, fill: { color: CARD }, line: { color: ACC, width: 3 }, objectName: on("hero-card") });
+    s.addText(runs.map(r => ({ ...r, options: { ...r.options, fontSize: r.options.fontSize === 54 ? 60 : 34 } })), { x: 0.8, y: 1.25, w: 8.4, h: 2.4, align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("hero") });
+    s.addText(sl.sub, { x: 0.5, y: 4.05, w: 9, h: 0.6, fontSize: 22, bold: true, color: WHITE, align: "center", margin: 0, valign: "middle", isTextBox: true, objectName: on("hero-sub") });
+    return;
+  }
   s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 0.98, w: 9, h: 2.0, rectRadius: 0.16, fill: { color: CARD }, line: { color: ACC, width: 2.5 }, objectName: on("hero-card") });
   s.addText(runs, { x: 0.8, y: 1.08, w: 8.4, h: 1.8, align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("hero") });
   // サブ
@@ -430,6 +435,24 @@ for (const raw of SLIDES) {
       s.addText("→ " + body, { x: X + 0.3, y: y + rh / 2, w: lw - 0.5, h: rh / 2 - 0.12, fontSize: 17, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("v-b") });
     });
     answerBanner(s, sl.answer, X, 4.45, W, 0.7);
+    continue;
+  }
+
+  if (sl.tag === "次回への改善") { // 1行に「項目｜気づき ▶ 次回へ」を3段
+    heading(s, sl.heading, X, 0.95, W, 28);
+    const list = sl.items, n = list.length, gap = 0.15, top = 1.7, rh = (5.1 - top - gap * (n - 1)) / n;
+    list.forEach((it, i) => {
+      const y = top + i * (rh + gap);
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y, w: W, h: rh, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("nx-row") });
+      s.addShape(pres.shapes.RECTANGLE, { x: X, y: y + 0.18, w: 0.08, h: rh - 0.36, fill: { color: ACC }, line: { type: "none" }, objectName: on("nx-bar") });
+      s.addText(it.text, { x: X + 0.28, y, w: 2.25, h: rh, fontSize: 17, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("nx-title") });
+      s.addText([{ text: it.k1 || "気づき", options: { fontSize: 12, bold: true, color: MUTED, breakLine: true } }, ...rich(it.kizuki, { fontSize: 14, bold: true, color: SUB })],
+        { x: X + 2.6, y, w: 2.9, h: rh, margin: 0, valign: "middle", paraSpaceBefore: 2, isTextBox: true, objectName: on("nx-k") });
+      s.addText("▶", { x: X + 5.5, y, w: 0.4, h: rh, fontSize: 16, bold: true, color: ACC, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("nx-arrow") });
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X + 5.95, y: y + 0.1, w: 2.95, h: rh - 0.2, rectRadius: 0.1, fill: { color: C.text1 }, line: { color: ACC, width: 1.5 }, objectName: on("nx-nbg") });
+      s.addText([{ text: "次回へ", options: { fontSize: 12, bold: true, color: ACC, breakLine: true } }, ...rich(it.next, { fontSize: 14, bold: true, color: WHITE })],
+        { x: X + 6.1, y: y + 0.1, w: 2.7, h: rh - 0.2, margin: 0, valign: "middle", paraSpaceBefore: 2, isTextBox: true, objectName: on("nx-n") });
+    });
     continue;
   }
 

@@ -1,7 +1,7 @@
 // 発表の順番（操作パネルと発表画面で共通）
 // 待機 →（3・2・1）→ タイトル → スライド →（動画のあるページでは）上映 → 投票 → 結果 → 次のスライド …
-import { phaseOf } from "./common.js?v=76";
-import { SLIDES } from "./slides.js?v=76";
+import { phaseOf } from "./common.js?v=77";
+import { SLIDES } from "./slides.js?v=77";
 
 export const STEPS = [{ phase: "title" }];
 SLIDES.forEach((sl, i) => {
