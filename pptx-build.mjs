@@ -218,7 +218,7 @@ function handSlide(v, section) {
 }
 
 // ===== 各ページ =====
-const sectionOf = sl => sl.prep === "P" ? (sl.tag.startsWith("まとめ") ? "P まとめ" : "P 結論") : sl.prep === "R" ? "R 理由" : sl.prep === "E" ? "E 具体例" : "導入";
+const sectionOf = sl => sl.prep === "P" ? (sl.tag === "結論" ? "P 結論" : "P まとめ") : sl.prep === "R" ? "R 理由" : sl.prep === "E" ? "E 具体例" : "導入";
 let lastSection = "";
 function section(name) { if (name !== lastSection) { pres.addSection({ title: name }); lastSection = name; } return name; }
 
