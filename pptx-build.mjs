@@ -144,6 +144,34 @@ function framedImage(s, path, x, y, w, h, cap) {
 }
 function fitBox(iw, ih, bw, bh) { const r = Math.min(bw / iw, bh / ih); return [iw * r, ih * r]; }
 
+
+// ===== 結論・まとめ：一番伝えたい一文を大きく、2〜3の細かい点はサブのカードで =====
+function heroSlide(s, sl) {
+  // メインの一文：強調部分（興味関心の一歩目）をいちばん大きく
+  const runs = [];
+  String(sl.heading).split("\n").forEach((line, li, arr) => {
+    line.split("**").forEach((p, j) => {
+      if (!p) return;
+      runs.push({ text: p, options: j % 2 ? { fontSize: 54, bold: true, color: ACC } : { fontSize: 30, bold: true, color: WHITE } });
+    });
+    if (li < arr.length - 1) runs[runs.length - 1].options.breakLine = true;
+  });
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 0.98, w: 9, h: 2.0, rectRadius: 0.16, fill: { color: CARD }, line: { color: ACC, width: 2.5 }, objectName: on("hero-card") });
+  s.addText(runs, { x: 0.8, y: 1.08, w: 8.4, h: 1.8, align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("hero") });
+  // サブ
+  s.addText(sl.sub, { x: 0.5, y: 3.13, w: 9, h: 0.36, fontSize: 15, bold: true, color: SUB, margin: 0, valign: "middle", isTextBox: true, objectName: on("hero-sub") });
+  const list = sl.items, n = list.length, gap = 0.25, cw = (9 - gap * (n - 1)) / n, y = 3.58, h = 1.45;
+  list.forEach((it, i) => {
+    const x = 0.5 + i * (cw + gap);
+    const [ttl, ...rest] = String(it.text).split("\n");
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: cw, h, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("sub-card") });
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.2, y: y + 0.2, w: 0.38, h: 0.38, rectRadius: 0.07, fill: { color: ACC }, line: { type: "none" }, objectName: on("sub-chip") });
+    s.addText(it.prep, { x: x + 0.2, y: y + 0.2, w: 0.38, h: 0.38, fontSize: 15, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("sub-chip-t") });
+    s.addText(rich(ttl.replace(/^→\s*/, ""), { fontSize: 15, bold: true, color: ACC }), { x: x + 0.7, y: y + 0.17, w: cw - 0.85, h: 0.44, margin: 0, valign: "middle", isTextBox: true, objectName: on("sub-title") });
+    s.addText(rich(rest.join("\n").replace(/^→\s*/, ""), { fontSize: 14, bold: true, color: WHITE }), { x: x + 0.2, y: y + 0.7, w: cw - 0.4, h: h - 0.82, margin: 0, valign: "top", isTextBox: true, objectName: on("sub-text") });
+  });
+}
+
 // ===== 動画と挙手のスライド =====
 const VID = {
   v2: { file: A + "video2.mp4", poster: A + "v2thumb.jpg", w: 960, h: 540, title: "呼び込み動画「ぺぱぽん、くるりんぽ」", q: "これを見て、やってみたくなった？", yes: "やってみたい", no: "そうでもない" },
@@ -241,6 +269,7 @@ for (const raw of SLIDES) {
     continue;
   }
 
+  if (sl.hero) { heroSlide(s, sl); continue; }
   const fig = sl.figure;
   const cw = fig ? 6.1 : W;
   if (fig) {
@@ -256,7 +285,7 @@ for (const raw of SLIDES) {
     y += h + 0.3;
   }
   if (sl.items) y = items(s, sl.items, X, sl.heading ? y : 1.15, cw, sl.tag === "目次" ? 20 : 18) + 0.3;
-  if (sl.facts) y = facts(s, sl.facts, X, sl.heading ? y : (fig ? 1.0 : 1.1), cw, sl.tag === "新西ゼミ × ペパポン　連携の取り組み" ? 1.15 : 1.4, fig ? 16 : 17) + 0.3;
+  if (sl.facts) y = facts(s, sl.facts, X, sl.heading ? y : (fig ? 1.0 : 1.1), cw, sl.tag === "新西ゼミ × ペパポン　連携の取り組み" ? 0.95 : 1.4, fig ? 16 : 17) + 0.3;
   if (sl.stats) y = stats(s, sl.stats, X, y, cw) + 0.3;
   if (sl.pillars) y = pillarCards(s, sl.pillars, X, y, cw, 2.15) + 0.3;
   if (sl.lines) for (const l of sl.lines) y = noteLine(s, l, X, Math.min(y, 4.55), cw) + 0.15;
