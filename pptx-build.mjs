@@ -279,10 +279,11 @@ for (const raw of SLIDES) {
       s.addText(yr, { x: x + 0.25, y: 1.85, w: cw - 0.5, h: 0.6, fontSize: 32, bold: true, color: last ? WHITE : ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("tl-year") });
       s.addText(rich(TL[yr], { fontSize: 14, bold: true, color: WHITE }, last ? WHITE : ACC), { x: x + 0.25, y: 2.45, w: cw - 0.5, h: 1.5, margin: 0, valign: "top", lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("tl-text") });
     });
-    const [label, body] = sl.lines[0].split("\n");
+    const [label, body0] = sl.lines[0].split("\n");
+    const body = body0.replace("発信で、", "発信で、\n");
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: 4.3, w: W, h: 0.85, rectRadius: 0.12, fill: { color: CARD }, line: { color: GOLD, width: 1.5 }, objectName: on("request") });
     s.addText(label.replace(/：$/, ""), { x: X + 0.3, y: 4.3, w: 2.0, h: 0.85, fontSize: 16, bold: true, color: GOLD, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-k") });
-    s.addText(body, { x: X + 2.3, y: 4.3, w: W - 2.6, h: 0.85, fontSize: 18, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-v") });
+    s.addText(body, { x: X + 2.3, y: 4.3, w: W - 2.6, h: 0.85, fontSize: 17, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-v") });
     continue;
   }
 
@@ -300,33 +301,19 @@ for (const raw of SLIDES) {
     continue;
   }
 
-  if (sl.tag === "背景　これまでの課題") { // 課題：左に集客の課題とデータ、右に企業の願い
-    heading(s, "過去の多摩祭で見えた**2つの課題**", X, 1.0, W, 30);
-    const top = 1.8, h = 2.55;
-    // 課題1：集客・宣伝（データつき）
-    const lw = 5.35;
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: top, w: lw, h, rectRadius: 0.14, fill: { color: CARD }, line: { color: ACC, width: 2 }, objectName: on("issue1") });
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X + 0.25, y: top + 0.25, w: 0.44, h: 0.44, rectRadius: 0.08, fill: { color: ACC }, line: { type: "none" }, objectName: on("chip") });
-    s.addText("1", { x: X + 0.25, y: top + 0.25, w: 0.44, h: 0.44, fontSize: 18, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("chip-t") });
-    s.addText(rich("**集客・宣伝**が難しかった", { fontSize: 20, bold: true, color: WHITE }), { x: X + 0.85, y: top + 0.2, w: lw - 1.1, h: 0.54, margin: 0, valign: "middle", isTextBox: true, objectName: on("issue1-t") });
-    const bw = lw - 0.5;
+  if (sl.tag === "背景　これまでの課題") { // 集客の課題：想定と実績を大きな横棒で
+    heading(s, sl.heading, X, 0.95, W, 30);
+    const top = 2.15, h = 2.2;
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: top, w: W, h, rectRadius: 0.14, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("gap-card") });
+    const lx = X + 0.35, labW = 2.7, bx = lx + labW, bw = W - 0.7 - labW - 1.85;
     sl.gaps.forEach((g, i) => {
-      const gy = top + 0.98 + i * 0.75;
-      s.addText(g.label, { x: X + 0.25, y: gy, w: 3, h: 0.3, fontSize: 14, bold: true, color: SUB, margin: 0, valign: "middle", isTextBox: true, objectName: on("gap-l") });
-      s.addText([{ text: String(g.actual), options: { fontSize: 18, bold: true, color: ACC } }, { text: ` / 想定${g.plan}${g.unit}`, options: { fontSize: 13, bold: true, color: SUB } }],
-        { x: X + 0.25 + bw - 2.2, y: gy - 0.03, w: 2.2, h: 0.34, align: "right", margin: 0, valign: "middle", isTextBox: true, objectName: on("gap-v") });
-      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X + 0.25, y: gy + 0.36, w: bw, h: 0.2, rectRadius: 0.1, fill: { color: LINE }, line: { type: "none" }, objectName: on("gap-bg") });
-      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X + 0.25, y: gy + 0.36, w: bw * g.actual / g.plan, h: 0.2, rectRadius: 0.1, fill: { color: ACC }, line: { type: "none" }, objectName: on("gap-bar") });
+      const gy = top + 0.35 + i * 0.85;
+      s.addText(g.label.replace("　", "\n"), { x: lx, y: gy, w: labW, h: 0.7, fontSize: 15, bold: true, color: SUB, margin: 0, valign: "middle", isTextBox: true, objectName: on("gap-l") });
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: bx, y: gy + 0.2, w: bw, h: 0.32, rectRadius: 0.16, fill: { color: LINE }, line: { type: "none" }, objectName: on("gap-bg") });
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: bx, y: gy + 0.2, w: bw * g.actual / g.plan, h: 0.32, rectRadius: 0.16, fill: { color: ACC }, line: { type: "none" }, objectName: on("gap-bar") });
+      s.addText([{ text: String(g.actual), options: { fontSize: 30, bold: true, color: ACC } }, { text: g.unit, options: { fontSize: 15, bold: true, color: WHITE, breakLine: true } }, { text: `想定 ${g.plan}${g.unit}`, options: { fontSize: 12, bold: true, color: SUB } }],
+        { x: bx + bw + 0.2, y: gy - 0.05, w: 1.6, h: 0.8, align: "left", margin: 0, valign: "middle", isTextBox: true, objectName: on("gap-v") });
     });
-    // 課題2：企業の願い
-    const rx = X + lw + 0.3, rw = 9.5 - rx;
-    const it2 = sl.items[1];
-    const [t2a, t2b] = it2.text.split("\n");
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: rx, y: top, w: rw, h, rectRadius: 0.14, fill: { color: CARD }, line: { color: ACC, width: 2 }, objectName: on("issue2") });
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: rx + 0.25, y: top + 0.25, w: 0.44, h: 0.44, rectRadius: 0.08, fill: { color: ACC }, line: { type: "none" }, objectName: on("chip") });
-    s.addText("2", { x: rx + 0.25, y: top + 0.25, w: 0.44, h: 0.44, fontSize: 18, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("chip-t") });
-    s.addText("企業の願い", { x: rx + 0.85, y: top + 0.2, w: rw - 1.0, h: 0.54, fontSize: 20, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("issue2-t") });
-    s.addText(rich("商品も目的もいい。\nでも、もっといろんな\n子どもたちに\n**魅力を広めたい**", { fontSize: 17, bold: true, color: WHITE }), { x: rx + 0.25, y: top + 0.95, w: rw - 0.5, h: h - 1.1, margin: 0, valign: "top", lineSpacingMultiple: 1.1, isTextBox: true, objectName: on("issue2-v") });
     noteLine(s, sl.lines[0], X, 4.6, W);
     continue;
   }
