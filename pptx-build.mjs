@@ -265,9 +265,9 @@ for (const raw of SLIDES) {
 
   if (sl.tag === "新西ゼミ × ペパポン　連携の取り組み") { // 年表：横いっぱいのタイムライン＋下に企業からの依頼
     const TL = {
-      "2024": "多摩祭で\nSDGsブースを出展\n来場**79人**\n販売**46台**",
-      "2025": "子ども向け\nワークショップを企画\n満足度**100％**",
-      "2026": "今回の多摩祭で\nワークショップ\n＋動画コンテスト"
+      "2024": "多摩祭で\nSDGsブースを出展\n想定100人 → 販売**46個**",
+      "2025": "子ども向け\nワークショップを企画\n想定40人 → 参加**21人**\n満足度**100％**",
+      "2026": "今回の多摩祭で\nワークショップ\n＋動画コンテスト\n想定50人 → 参加**61人**"
     };
     const n = sl.facts.length, gap = 0.3, cw = (W - gap * (n - 1)) / n;
     const lineY = 1.32;
@@ -277,7 +277,7 @@ for (const raw of SLIDES) {
       s.addShape(pres.shapes.OVAL, { x: x + cw / 2 - 0.17, y: lineY - 0.17, w: 0.34, h: 0.34, fill: { color: last ? ACC : C.text1 }, line: { color: ACC, width: 3 }, objectName: on("tl-dot") });
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 1.7, w: cw, h: 2.3, rectRadius: 0.14, fill: { color: last ? ACC : CARD }, line: { color: last ? ACC : LINE, width: 1.5 }, objectName: on("tl-card") });
       s.addText(yr, { x: x + 0.25, y: 1.85, w: cw - 0.5, h: 0.6, fontSize: 32, bold: true, color: last ? WHITE : ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("tl-year") });
-      s.addText(rich(TL[yr], { fontSize: 16, bold: true, color: WHITE }, last ? WHITE : ACC), { x: x + 0.25, y: 2.5, w: cw - 0.5, h: 1.4, margin: 0, valign: "top", lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("tl-text") });
+      s.addText(rich(TL[yr], { fontSize: 14, bold: true, color: WHITE }, last ? WHITE : ACC), { x: x + 0.25, y: 2.45, w: cw - 0.5, h: 1.5, margin: 0, valign: "top", lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("tl-text") });
     });
     const [label, body] = sl.lines[0].split("\n");
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: 4.3, w: W, h: 0.85, rectRadius: 0.12, fill: { color: CARD }, line: { color: GOLD, width: 1.5 }, objectName: on("request") });
