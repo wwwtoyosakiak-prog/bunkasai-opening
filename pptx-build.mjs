@@ -331,7 +331,7 @@ for (const raw of SLIDES) {
     continue;
   }
 
-  if (sl.tag.startsWith("理由②")) { // 動画 → 興味 → 参加 の3段階を横いっぱいに
+  if (sl.tag.includes("呼び込み動画を見た子どもは")) { // 動画 → 興味 → 参加 の3段階を横いっぱいに
     heading(s, sl.heading, X, 0.95, W, 30);
     const [q1, q2] = sl.quote.split("\n");
     const steps = [

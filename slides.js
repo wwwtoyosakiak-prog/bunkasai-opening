@@ -89,7 +89,7 @@ export const SLIDES = [
   },
   {
     prep: "R",
-    tag: "理由①　この動画をつくった理由　呼び込み動画",
+    tag: "理由①　呼び込み動画　つくった理由",
     figure: { src: "photos/v2thumb.jpg?v=1", cap: "「ぺぱぽん、くるりんぽ」", fit: "contain" },
     facts: [
       ["理由", "体験の中身はいいのに、**参加する前**に楽しさが伝わらない"],
@@ -104,7 +104,7 @@ export const SLIDES = [
   },
   {
     prep: "R",
-    tag: "理由②　呼び込み動画を見た子どもは　→ 結論1",
+    tag: "理由①　呼び込み動画を見た子どもは　→ 結論1",
     heading: "出店場所の前で**動画を流す**と…",
     quote: "「ママ、これ何？」\n「これやりたい」",
     lines: [
@@ -113,7 +113,7 @@ export const SLIDES = [
   },
   {
     prep: "R",
-    tag: "理由③　この動画をつくった理由　動画コンテスト",
+    tag: "理由②　動画コンテスト　つくった理由",
     figure: { src: "photos/v1thumb.jpg?v=1", cap: "優勝作品（縦型・15秒）", fit: "contain" },
     facts: [
       ["理由", "企業の課題：商品も目的もいいのに\n**まだ子どもたちに知られていない**"],
@@ -126,7 +126,7 @@ export const SLIDES = [
     then: "v1"
   },  {
     prep: "R",
-    tag: "理由④　動画コンテストを見た子どもは　→ 結論2",
+    tag: "理由②　動画コンテストを見た子どもは　→ 結論2",
     heading: "動画を見た子どもから\nこんな声が",
     figure: { src: "photos/photo3.jpg?v=2", cap: "動画コンテストの様子", pos: "50% 45%" },
     items: [
