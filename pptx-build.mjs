@@ -256,7 +256,7 @@ for (const raw of SLIDES) {
     y += h + 0.3;
   }
   if (sl.items) y = items(s, sl.items, X, sl.heading ? y : 1.15, cw, sl.tag === "目次" ? 20 : 18) + 0.3;
-  if (sl.facts) y = facts(s, sl.facts, X, sl.heading ? y : (fig ? 1.0 : 1.1), cw, sl.tag === "新西ゼミ × ペパポン　連携の取り組み" ? 0.95 : 1.4, fig ? 16 : 17) + 0.3;
+  if (sl.facts) y = facts(s, sl.facts, X, sl.heading ? y : (fig ? 1.0 : 1.1), cw, sl.tag === "新西ゼミ × ペパポン　連携の取り組み" ? 1.15 : 1.4, fig ? 16 : 17) + 0.3;
   if (sl.stats) y = stats(s, sl.stats, X, y, cw) + 0.3;
   if (sl.pillars) y = pillarCards(s, sl.pillars, X, y, cw, 2.15) + 0.3;
   if (sl.lines) for (const l of sl.lines) y = noteLine(s, l, X, Math.min(y, 4.55), cw) + 0.15;
