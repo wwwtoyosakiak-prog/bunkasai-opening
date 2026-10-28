@@ -154,6 +154,24 @@ function fitBox(iw, ih, bw, bh) { const r = Math.min(bw / iw, bh / ih); return [
 
 
 // ===== 結論・まとめ：一番伝えたい一文を大きく、2〜3の細かい点はサブのカードで =====
+// まとめ：結論をもう一度＋「気づき → 次回へ」を3つ
+function summarySlide(s, sl, runs) {
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 0.95, w: 9, h: 1.55, rectRadius: 0.16, fill: { color: CARD }, line: { color: ACC, width: 2.5 }, objectName: on("hero-card") });
+  s.addText(runs, { x: 0.8, y: 1.0, w: 8.4, h: 1.45, align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 1.0, isTextBox: true, objectName: on("hero") });
+  s.addText(sl.sub, { x: 0.5, y: 2.6, w: 9, h: 0.34, fontSize: 15, bold: true, color: SUB, margin: 0, valign: "middle", isTextBox: true, objectName: on("hero-sub") });
+  const list = sl.items, n = list.length, gap = 0.25, cw = (9 - gap * (n - 1)) / n, y = 3.05, h = 2.1;
+  list.forEach((it, i) => {
+    const x = 0.5 + i * (cw + gap);
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: cw, h, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("sum-card") });
+    s.addText(it.text, { x: x + 0.2, y: y + 0.1, w: cw - 0.4, h: 0.4, fontSize: 16, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("sum-title") });
+    s.addShape(pres.shapes.LINE, { x: x + 0.2, y: y + 0.52, w: cw - 0.4, h: 0, line: { color: LINE, width: 1 }, objectName: on("sum-div") });
+    s.addText([{ text: "気づき", options: { fontSize: 11, bold: true, color: MUTED, breakLine: true } }, ...rich(it.kizuki, { fontSize: 12, bold: true, color: SUB })],
+      { x: x + 0.2, y: y + 0.58, w: cw - 0.4, h: 0.68, margin: 0, valign: "top", isTextBox: true, objectName: on("sum-k") });
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.12, y: y + 1.3, w: cw - 0.24, h: 0.7, rectRadius: 0.08, fill: { color: C.text1 }, line: { color: ACC, width: 1 }, objectName: on("sum-nbg") });
+    s.addText([{ text: "次回へ", options: { fontSize: 11, bold: true, color: ACC, breakLine: true } }, ...rich(it.next, { fontSize: 13, bold: true, color: WHITE })],
+      { x: x + 0.22, y: y + 1.33, w: cw - 0.44, h: 0.64, margin: 0, valign: "middle", isTextBox: true, objectName: on("sum-n") });
+  });
+}
 function heroSlide(s, sl) {
   // メインの一文：強調部分（興味関心の一歩目）をいちばん大きく
   const runs = [];
@@ -164,6 +182,7 @@ function heroSlide(s, sl) {
     });
     if (li < arr.length - 1) runs[runs.length - 1].options.breakLine = true;
   });
+  if (sl.items[0].kizuki) return summarySlide(s, sl, runs);
   s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 0.98, w: 9, h: 2.0, rectRadius: 0.16, fill: { color: CARD }, line: { color: ACC, width: 2.5 }, objectName: on("hero-card") });
   s.addText(runs, { x: 0.8, y: 1.08, w: 8.4, h: 1.8, align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("hero") });
   // サブ
