@@ -331,6 +331,34 @@ for (const raw of SLIDES) {
     continue;
   }
 
+  if (sl.tag.startsWith("理由②")) { // 動画 → 興味 → 参加 の3段階を横いっぱいに
+    heading(s, sl.heading, X, 0.95, W, 30);
+    const [q1, q2] = sl.quote.split("\n");
+    const steps = [
+      { label: "動画を見る", sub: "出店場所の前で\n呼び込み動画が流れる" },
+      { label: "興味をもつ", q: q1.replace("、", "、\n") },
+      { label: "参加する", q: q2.replace("これ", "これ\n"), hot: true }
+    ];
+    const top = 1.75, h = 2.6, gap = 0.45, cw = (W - gap * 2) / 3;
+    steps.forEach((st, i) => {
+      const x = X + i * (cw + gap);
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: top, w: cw, h, rectRadius: 0.14, fill: { color: st.hot ? ACC : CARD }, line: { color: st.hot ? ACC : LINE, width: 1.5 }, objectName: on("r2-card") });
+      s.addShape(pres.shapes.OVAL, { x: x + 0.22, y: top + 0.22, w: 0.44, h: 0.44, fill: { color: st.hot ? WHITE : ACC }, line: { type: "none" }, objectName: on("r2-num") });
+      s.addText(String(i + 1), { x: x + 0.22, y: top + 0.22, w: 0.44, h: 0.44, fontSize: 17, bold: true, color: st.hot ? ACC : WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("r2-num-t") });
+      s.addText(st.label, { x: x + 0.78, y: top + 0.22, w: cw - 1.0, h: 0.44, fontSize: 18, bold: true, color: WHITE, valign: "middle", margin: 0, isTextBox: true, objectName: on("r2-label") });
+      if (st.q) {
+        s.addText(st.q, { x: x + 0.2, y: top + 0.85, w: cw - 0.4, h: h - 1.05, fontSize: 28, bold: true, color: st.hot ? WHITE : ACC, align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 1.1, isTextBox: true, objectName: on("r2-quote") });
+      } else {
+        const iw = cw - 0.8, ih = iw * 552 / 972;
+        s.addImage({ path: A + "v2thumb_r_c.jpg", x: x + (cw - iw) / 2, y: top + 0.85, w: iw, h: ih, altText: "呼び込み動画", objectName: on("r2-img") });
+        s.addText(st.sub, { x: x + 0.2, y: top + 0.85 + ih + 0.1, w: cw - 0.4, h: h - 0.95 - ih - 0.2, fontSize: 15, bold: true, color: SUB, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("r2-sub") });
+      }
+      if (i < 2) s.addText("▶", { x: x + cw, y: top + h / 2 - 0.25, w: gap, h: 0.5, fontSize: 20, bold: true, color: ACC, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("r2-arrow") });
+    });
+    noteLine(s, sl.lines[0], X, 4.6, W);
+    continue;
+  }
+
   if (sl.hero) { heroSlide(s, sl); continue; }
   const fig = sl.figure;
   const cw = fig ? 6.1 : W;
