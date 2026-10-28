@@ -165,7 +165,7 @@ function summarySlide(s, sl, runs) {
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: cw, h, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("sum-card") });
     s.addText(it.text, { x: x + 0.2, y: y + 0.1, w: cw - 0.4, h: 0.4, fontSize: 16, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("sum-title") });
     s.addShape(pres.shapes.LINE, { x: x + 0.2, y: y + 0.52, w: cw - 0.4, h: 0, line: { color: LINE, width: 1 }, objectName: on("sum-div") });
-    s.addText([{ text: "気づき", options: { fontSize: 11, bold: true, color: MUTED, breakLine: true } }, ...rich(it.kizuki, { fontSize: 12, bold: true, color: SUB })],
+    s.addText([{ text: it.k1 || "気づき", options: { fontSize: 11, bold: true, color: MUTED, breakLine: true } }, ...rich(it.kizuki, { fontSize: 12, bold: true, color: SUB })],
       { x: x + 0.2, y: y + 0.58, w: cw - 0.4, h: 0.68, margin: 0, valign: "top", isTextBox: true, objectName: on("sum-k") });
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.12, y: y + 1.3, w: cw - 0.24, h: 0.7, rectRadius: 0.08, fill: { color: C.text1 }, line: { color: ACC, width: 1 }, objectName: on("sum-nbg") });
     s.addText([{ text: "次回へ", options: { fontSize: 11, bold: true, color: ACC, breakLine: true } }, ...rich(it.next, { fontSize: 13, bold: true, color: WHITE })],
