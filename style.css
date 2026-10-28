@@ -208,3 +208,10 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 /* 合計のカードは塗りつぶして目立たせる */
 .statcard.total{background:var(--tc);border-color:var(--tc)}
 .statcard.total .num,.statcard.total .num small,.statcard.total .slabel{color:#fff}
+/* 感想・気づき・次回へ（3列） */
+.pillars.three{grid-template-columns:repeat(3,1fr);gap:1.6vw;margin-top:4vh}
+.pillars.three .pillar{padding:3vh 1.4vw}
+.pillars.three .pillar h3{font-size:clamp(26px,3vw,56px)}
+.pillars.three .pillar p{font-size:clamp(18px,1.9vw,34px);line-height:1.5}
+.pillars.three + .lines{margin-top:4vh}
+.slide.hasfig .facts dd{font-size:clamp(19px,2.15vw,38px)}
