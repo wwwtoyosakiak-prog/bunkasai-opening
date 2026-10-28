@@ -359,6 +359,23 @@ for (const raw of SLIDES) {
     continue;
   }
 
+  if (sl.tag === "理由②　動画コンテスト　つくった理由") { // 目的・思い・工夫を上下いっぱいに、右に作品
+    const top = 1.0, bot = 4.4, H = bot - top;
+    const ih = 5.1 - top - 0.45, iw = ih * 552 / 972, ix = 9.5 - iw;
+    framedImage(s, A + "v1thumb_r_d.jpg", ix, top, iw, ih, sl.figure.cap);
+    const lw = ix - 0.35 - X, n = sl.facts.length, gap = 0.15, rh = (H - gap * (n - 1)) / n;
+    sl.facts.forEach(([k, v], i) => {
+      const y = top + i * (rh + gap);
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y, w: lw, h: rh, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("r3-row") });
+      s.addShape(pres.shapes.RECTANGLE, { x: X, y: y + 0.18, w: 0.08, h: rh - 0.36, fill: { color: ACC }, line: { type: "none" }, objectName: on("r3-bar") });
+      s.addText(k, { x: X + 0.3, y, w: 1.8, h: rh, fontSize: 18, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("r3-k") });
+      s.addText(rich(v, { fontSize: 20, bold: true, color: WHITE }), { x: X + 2.15, y, w: lw - 2.35, h: rh, margin: 0, valign: "middle", isTextBox: true, objectName: on("r3-v") });
+    });
+    noteLine(s, sl.lines[0], X, 4.6, lw);
+    if (sl.then) videoSlide(VID[sl.then], sec);
+    continue;
+  }
+
   if (sl.hero) { heroSlide(s, sl); continue; }
   const fig = sl.figure;
   const cw = fig ? 6.1 : W;
