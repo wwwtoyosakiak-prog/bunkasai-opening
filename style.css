@@ -205,3 +205,6 @@ input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px;border-radi
 .slide.dense .items{gap:2.2vh;margin-top:3.5vh}
 .slide.dense .items li{font-size:clamp(20px,2.3vw,42px)}
 .slide.dense .lines{margin-top:3.5vh}
+/* 合計のカードは塗りつぶして目立たせる */
+.statcard.total{background:var(--tc);border-color:var(--tc)}
+.statcard.total .num,.statcard.total .num small,.statcard.total .slabel{color:#fff}

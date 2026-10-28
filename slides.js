@@ -122,7 +122,8 @@ export const SLIDES = [
     heading: "想定を**上回る**参加",
     stats: [
       { num: "61", unit: "人", label: "参加した子ども\n（想定は50人）" },
-      { num: "75", unit: "人", label: "付き添いの保護者" }
+      { num: "75", unit: "人", label: "付き添いの保護者" },
+      { num: "136", unit: "人", label: "合計（親子）", total: true }
     ]
   },
   {
