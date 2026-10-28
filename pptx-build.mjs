@@ -265,7 +265,7 @@ for (const raw of SLIDES) {
 
   if (sl.tag === "新西ゼミ × ペパポン　連携の取り組み") { // 年表：横いっぱいのタイムライン＋下に企業からの依頼
     const TL = {
-      "2024": "多摩祭で\nペパポンカプセルを販売\n想定100人 → 販売**46個**",
+      "2024": "多摩祭で\nペパポンカプセルを販売\n想定100個 → 販売**46個**",
       "2025": "子ども向け\nワークショップを企画\n想定40人 → 参加**21人**\n満足度**100％**",
       "2026": "今回の多摩祭で\nワークショップ\n＋動画コンテスト\n想定50人 → 参加**61人**"
     };
@@ -283,6 +283,20 @@ for (const raw of SLIDES) {
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: 4.3, w: W, h: 0.85, rectRadius: 0.12, fill: { color: CARD }, line: { color: GOLD, width: 1.5 }, objectName: on("request") });
     s.addText(label.replace(/：$/, ""), { x: X + 0.3, y: 4.3, w: 2.0, h: 0.85, fontSize: 16, bold: true, color: GOLD, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-k") });
     s.addText(body, { x: X + 2.3, y: 4.3, w: W - 2.6, h: 0.85, fontSize: 18, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-v") });
+    continue;
+  }
+
+  if (sl.tag === "活動の概要") { // 概要：5項目を上下いっぱいに並べ、右に完成品の写真
+    const top = 1.0, bot = 5.1, H = bot - top;
+    const ih = H - 0.45, iw = ih * 871 / 1353, ix = 9.5 - iw;
+    framedImage(s, A + "kit_d.jpg", ix, top, iw, ih, sl.figure.cap);
+    const lw = ix - 0.3 - X, n = sl.facts.length, gap = 0.12, rh = (H - gap * (n - 1)) / n;
+    sl.facts.forEach(([k, v], i) => {
+      const y = top + i * (rh + gap);
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y, w: lw, h: rh, rectRadius: 0.1, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("ov-row") });
+      s.addText(k, { x: X + 0.25, y, w: 1.05, h: rh, fontSize: 16, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("ov-k") });
+      s.addText(rich(v, { fontSize: 17, bold: true, color: WHITE }), { x: X + 1.35, y, w: lw - 1.55, h: rh, margin: 0, valign: "middle", isTextBox: true, objectName: on("ov-v") });
+    });
     continue;
   }
 
