@@ -226,7 +226,7 @@ function section(name) { if (name !== lastSection) { pres.addSection({ title: na
 section("導入");
 {
   const s = pres.addSlide({ masterName: "TITLE", sectionTitle: "導入" });
-  s.addText("動画で子どもを呼び込む", { placeholder: "title" });
+  s.addText("動画がつくる、興味の一歩目", { placeholder: "title" });
   s.addText("多摩祭2026 段ボールガチャワークショップの報告", { placeholder: "subtitle" });
   s.addText([{ text: "多摩大学 経営情報学部 新西ゼミ", options: { fontSize: 16, color: SUB, breakLine: true } }, { text: "3年　金彌 寛大・丹伊田 一輝・池森 和真", options: { fontSize: 20 } }], { placeholder: "byline" });
 }
