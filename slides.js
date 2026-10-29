@@ -21,7 +21,7 @@ export const SLIDES = [
     heading: "**段ボール**でできたガチャガチャ",
     split: { src: "photos/lineup.jpg?v=1", cap: "ガチャ本体もカプセルも、すべて段ボール" },
     pillars: [
-      { icon: "photos/sdg12.png?v=1", title: "環境に貢献", text: "段ボールのリサイクル率は\n**ほぼ100％**" },
+      { icon: "photos/sdg12.png?v=1", title: "環境に貢献", text: "段ボールの\nリサイクル率は\n**ほぼ100％**" },
       { icon: "photos/sdg8.png?v=1", title: "社会に貢献", text: "カプセルの組み立てを\n**福祉作業所**に依頼し、\n障がいのある人の仕事に" }
     ]
   },
@@ -75,9 +75,9 @@ export const SLIDES = [
     tag: "当日の様子　ワークショップの流れ",
     flow: true,
     photos: [
-      { src: "photos/photo2.jpg?v=2", step: "①", cap: "紙芝居・クイズ", pos: "45% 50%" },
-      { src: "photos/photo2b.jpg?v=2", step: "②", cap: "キット作成", pos: "50% 55%" },
-      { src: "photos/photo3.jpg?v=2", step: "③", cap: "動画コンテスト", pos: "55% 40%" }
+      { src: "photos/photo2.jpg?v=2", step: "①", cap: "紙芝居・クイズ", sub: "ペパポンの話を聞く", pos: "45% 50%" },
+      { src: "photos/photo2b.jpg?v=2", step: "②", cap: "キット作成", sub: "組み立てて飾り付け", pos: "50% 55%" },
+      { src: "photos/photo3.jpg?v=2", step: "③", cap: "動画コンテスト", sub: "動画を見て親子で投票", pos: "55% 40%" }
     ]
   },
   {
@@ -96,10 +96,10 @@ export const SLIDES = [
     tag: "理由①　呼び込み動画",
     figure: { src: "photos/v2thumb.jpg?v=1", cap: "「ぺぱぽん、くるりんぽ」", fit: "contain" },
     facts: [
-      ["理由", "体験の中身はいいのに、**参加する前**に楽しさが伝わらない"],
-      ["目的", "出店場所の前で流し、通りかかった親子に\n**足を止めてもらう**"],
+      ["理由", "体験の中身はいいのに\n**参加する前**に楽しさが伝わらない"],
+      ["目的", "通りかかった親子に\n**足を止めてもらう**"],
       ["届けたい思い", "ガチャを回す・パカッと開ける\n**ワクワク感**"],
-      ["工夫", "楽しく**POPな音楽**とキャッチーな\nフレーズ「**ぺぱぽん、くるりんぽ**」"]
+      ["工夫", "**POPな音楽**と\nフレーズ「**ぺぱぽん、くるりんぽ**」"]
     ],
     lines: [
       "では、実際に流していた動画をご覧ください"
@@ -149,6 +149,9 @@ export const SLIDES = [
       { num: "61", unit: "人", label: "参加した子ども\n（想定は50人）" },
       { num: "75", unit: "人", label: "付き添いの保護者" },
       { num: "136", unit: "人", label: "合計（親子）", total: true }
+    ],
+    lines: [
+      "想定の半分ほどだった過去2年から、**大きく伸びました**"
     ]
   },
 
