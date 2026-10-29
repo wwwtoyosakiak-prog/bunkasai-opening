@@ -132,6 +132,19 @@ export const SLIDES = [
   },
   {
     prep: "R",
+    tag: "理由②　優勝作品をつくった動画班から",
+    figure: { src: "photos/v1thumb.jpg?v=1", cap: "優勝作品（面白かった83％）", fit: "contain" },
+    facts: [
+      ["目的", "仮で入れてます"],
+      ["届けたい思い", "仮で入れてます"],
+      ["工夫", "仮で入れてます"]
+    ],
+    lines: [
+      "発表：動画班"
+    ]
+  },
+  {
+    prep: "R",
     tag: "理由②　動画コンテストを見た子どもは　→ 結論2",
     heading: "動画を見た子どもから、こんな声が",
     figure: { src: "photos/photo3.jpg?v=2", cap: "動画コンテストの様子", pos: "50% 45%" },

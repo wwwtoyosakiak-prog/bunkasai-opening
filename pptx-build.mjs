@@ -405,7 +405,7 @@ for (const raw of SLIDES) {
     continue;
   }
 
-  if (sl.tag === "理由②　動画コンテスト") { // 目的・思い・工夫を上下いっぱいに、右に作品
+  if (sl.tag === "理由②　動画コンテスト" || sl.tag === "理由②　優勝作品をつくった動画班から") { // 目的・思い・工夫を上下いっぱいに、右に作品
     const top = 1.0, bot = 4.4, H = bot - top;
     const ih = 5.1 - top - 0.45, iw = ih * 552 / 972, ix = 9.5 - iw;
     framedImage(s, A + "v1thumb_r_d.jpg", ix, top, iw, ih, sl.figure.cap);
