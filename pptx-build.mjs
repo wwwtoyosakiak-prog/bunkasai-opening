@@ -456,20 +456,23 @@ for (const raw of SLIDES) {
     continue;
   }
 
-  if (sl.vs) { // 2つの動画のちがい：左右の比較表
-    const v = sl.vs, top = 1.6, hh = 0.5, nr = v.rows.length, rh = (5.1 - top - hh) / nr, lw = 1.8, cw = (W - lw - 0.2) / 2;
-    heading(s, sl.heading, X, 0.95, W, 28);
+  if (sl.vs) { // 2つの動画のちがい：左右の比較表（2行の行は高く）
+    const v = sl.vs, top = 1.5, hh = 0.45, lw = 1.8, cw = (W - lw - 0.2) / 2;
+    const wts = v.rows.map(r => r.slice(1).some(t => t.includes("\n")) ? 1.6 : 1), unit = (5.12 - top - hh) / wts.reduce((a, b) => a + b, 0);
+    heading(s, sl.heading, X, 0.9, W, 26);
     v.cols.forEach((c, j) => {
       const x = X + lw + 0.2 + j * cw;
-      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.06, y: top, w: cw - 0.12, h: hh + nr * rh, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("vs-col") });
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.06, y: top, w: cw - 0.12, h: 5.12 - top, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("vs-col") });
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.06, y: top, w: cw - 0.12, h: hh, rectRadius: 0.12, fill: { color: ACC }, line: { type: "none" }, objectName: on("vs-hbg") });
-      s.addText(c, { x, y: top, w: cw, h: hh, fontSize: 19, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("vs-h") });
+      s.addText(c, { x, y: top, w: cw, h: hh, fontSize: 18, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("vs-h") });
     });
+    let y = top + hh;
     v.rows.forEach((r, i) => {
-      const y = top + hh + i * rh;
+      const rh = unit * wts[i];
       if (i) s.addShape(pres.shapes.LINE, { x: X, y, w: W, h: 0, line: { color: LINE, width: 0.75 }, objectName: on("vs-line") });
-      s.addText(r[0], { x: X, y, w: lw, h: rh, fontSize: 16, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("vs-k") });
-      r.slice(1).forEach((t, j) => s.addText(rich(t, { fontSize: 15, bold: true, color: t === "要確認" ? MUTED : WHITE }), { x: X + lw + 0.2 + j * cw + 0.25, y, w: cw - 0.5, h: rh, align: "center", margin: 0, valign: "middle", isTextBox: true, objectName: on("vs-v") }));
+      s.addText(r[0], { x: X, y, w: lw, h: rh, fontSize: 15, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("vs-k") });
+      r.slice(1).forEach((t, j) => s.addText(rich(t, { fontSize: 15, bold: true, color: t === "要確認" ? MUTED : WHITE }), { x: X + lw + 0.2 + j * cw + 0.2, y, w: cw - 0.4, h: rh, align: "center", margin: 0, valign: "middle", isTextBox: true, objectName: on("vs-v") }));
+      y += rh;
     });
     continue;
   }
