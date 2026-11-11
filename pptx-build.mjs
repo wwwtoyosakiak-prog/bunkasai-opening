@@ -439,6 +439,33 @@ for (const raw of SLIDES) {
     continue;
   }
 
+  if (sl.staff) { // スタッフのふりかえり：上に「気づき → どうなったか」、下に「課題・発見 → 次回へ」
+    const st = sl.staff;
+    heading(s, sl.heading, X, 0.95, W, 28);
+    // 上段
+    const t1 = 1.65, h1 = 1.05;
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: t1, w: W, h: h1, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("st-top") });
+    s.addText([{ text: "気づき", options: { fontSize: 13, bold: true, color: MUTED, breakLine: true } }, ...rich(st.good[0], { fontSize: 17, bold: true, color: WHITE })], { x: X + 0.3, y: t1, w: 4.3, h: h1, margin: 0, valign: "middle", isTextBox: true, objectName: on("st-g1") });
+    s.addText("▶", { x: X + 4.6, y: t1, w: 0.45, h: h1, fontSize: 18, bold: true, color: ACC, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("st-ar1") });
+    s.addText([{ text: "どうなったか", options: { fontSize: 13, bold: true, color: MUTED, breakLine: true } }, ...rich(st.good[1], { fontSize: 17, bold: true, color: WHITE })], { x: X + 5.15, y: t1, w: 3.7, h: h1, margin: 0, valign: "middle", isTextBox: true, objectName: on("st-g2") });
+    // 下段
+    const t2 = t1 + h1 + 0.2, h2 = 5.12 - t2, lw = 5.2, rx = X + lw + 0.45, rw = W - lw - 0.45;
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: t2, w: lw, h: h2, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("st-issue") });
+    s.addText("残った課題・発見", { x: X + 0.25, y: t2 + 0.12, w: lw - 0.5, h: 0.4, fontSize: 16, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("st-ih") });
+    const ih = (h2 - 0.65) / st.issues.length;
+    st.issues.forEach((t, i) => {
+      s.addText([{ text: "・", options: { fontSize: 17, bold: true, color: ACC } }, ...rich(t, { fontSize: 17, bold: true, color: WHITE })], { x: X + 0.25, y: t2 + 0.55 + i * ih, w: lw - 0.45, h: ih, margin: 0, valign: "middle", isTextBox: true, objectName: on("st-i") });
+    });
+    s.addText("▶", { x: X + lw, y: t2, w: 0.45, h: h2, fontSize: 20, bold: true, color: ACC, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("st-ar2") });
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: rx, y: t2, w: rw, h: h2, rectRadius: 0.12, fill: { color: C.text1 }, line: { color: ACC, width: 2 }, objectName: on("st-next") });
+    s.addText("次回へ", { x: rx + 0.25, y: t2 + 0.12, w: rw - 0.5, h: 0.4, fontSize: 16, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("st-nh") });
+    const nh = (h2 - 0.65) / st.next.length;
+    st.next.forEach((t, i) => {
+      s.addText(rich(t, { fontSize: 18, bold: true, color: WHITE }), { x: rx + 0.25, y: t2 + 0.55 + i * nh, w: rw - 0.45, h: nh, margin: 0, valign: "middle", isTextBox: true, objectName: on("st-n") });
+    });
+    continue;
+  }
+
   if (sl.tag === "次回への改善") { // 1行に「項目｜気づき ▶ 次回へ」を3段
     heading(s, sl.heading, X, 0.95, W, 28);
     const list = sl.items, n = list.length, gap = 0.15, top = 1.7, rh = (5.1 - top - gap * (n - 1)) / n;
