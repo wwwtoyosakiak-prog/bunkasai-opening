@@ -439,6 +439,23 @@ for (const raw of SLIDES) {
     continue;
   }
 
+  if (sl.steps) { // 手順を横に並べたカード（番号・見出し・説明）
+    heading(s, sl.heading, X, 0.95, W, 28);
+    const n = sl.steps.length, gap = 0.4, cw = (W - gap * (n - 1)) / n, top = 1.75, h = 2.5;
+    sl.steps.forEach((st, i) => {
+      const x = X + i * (cw + gap), last = i === n - 1;
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: top, w: cw, h, rectRadius: 0.14, fill: { color: last ? ACC : CARD }, line: { color: last ? ACC : LINE, width: 1.5 }, objectName: on("stp-card") });
+      s.addShape(pres.shapes.OVAL, { x: x + 0.18, y: top + 0.2, w: 0.46, h: 0.46, fill: { color: last ? WHITE : ACC }, line: { type: "none" }, objectName: on("stp-num") });
+      s.addText(String(i + 1), { x: x + 0.18, y: top + 0.2, w: 0.46, h: 0.46, fontSize: 18, bold: true, color: last ? ACC : WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("stp-num-t") });
+      s.addText(st.title, { x: x + 0.72, y: top + 0.2, w: cw - 0.85, h: 0.46, fontSize: 19, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("stp-title") });
+      s.addText(rich(st.text, { fontSize: 17, bold: true, color: WHITE }, last ? WHITE : ACC), { x: x + 0.18, y: top + 0.85, w: cw - 0.36, h: h - 1.0, margin: 0, valign: "middle", align: "center", lineSpacingMultiple: 1.1, isTextBox: true, objectName: on("stp-text") });
+      if (i < n - 1) s.addText("▶", { x: x + cw, y: top + h / 2 - 0.25, w: gap, h: 0.5, fontSize: 18, bold: true, color: ACC, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("stp-arrow") });
+    });
+    const [lab, txt] = sl.lines[0].split("：");
+    answerBanner(s, { label: lab, text: txt + "\n上位作品は企業のSNSで、会場に来られない子どもにも届ける" }, X, 4.45, W, 0.7);
+    continue;
+  }
+
   if (sl.compare) { // なぜ動画？：方法ごとの○△×を表で、動画の列を強調
     const cp = sl.compare, top = 1.65, hh = 0.5, nr = cp.rows.length, rh = 0.55, lw = 4.3, cw = (W - lw) / cp.cols.length;
     heading(s, sl.heading, X, 0.95, W, 28);

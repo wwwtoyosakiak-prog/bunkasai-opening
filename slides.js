@@ -136,6 +136,20 @@ export const SLIDES = [
   },
   {
     prep: "R",
+    tag: "理由②　そもそも、動画コンテストとは？",
+    heading: "学生がつくった動画を、**親子が審査**するコンテスト",
+    steps: [
+      { title: "つくる", text: "学生が**15秒**の\n動画を制作\n（**9作品**）" },
+      { title: "見る", text: "体験の最後に\n親子で見る" },
+      { title: "投票する", text: "作品ごとに\n親子が投票" },
+      { title: "発信する", text: "上位3作品を\n**企業のSNS**に\n掲載予定" }
+    ],
+    lines: [
+      "ねらい：子どもに届く表現を、**親子の投票**で確かめる"
+    ]
+  },
+  {
+    prep: "R",
     tag: "理由②　動画コンテスト",
     figure: { src: "photos/v1thumb.jpg?v=1", cap: "優勝作品（面白かった83％）", fit: "contain" },
     facts: [
