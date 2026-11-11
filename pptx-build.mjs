@@ -10,7 +10,8 @@ const A = "assets/";
 const OUT = process.argv[2] || "deck.pptx";
 
 // ===== テーマ：黒地＋白の太字＋ピンクのアクセント（サイトと同じ） =====
-const HEX = { bg: "0B0B0F", card: "1F1F28", line: "4A4A5A", text: "FFFFFF", sub: "E4E4EC", muted: "B4B4C0", accent: "FF4573", gold: "FFD60A" };
+const HEX = { bg: "FFFFFF", card: "F2F3F7", line: "CDD1DB", text: "1A1C22", sub: "3A3F4C", muted: "6A7080", accent: "E0195A", gold: "F5B400" };
+const ON = "FFFFFF"; // アクセント色の上に置く文字
 const THEME = {
   name: "Bunkasai Dark",
   headFontFace: "Yu Gothic",
@@ -49,7 +50,7 @@ const contentLayout = (name, titleX, bg) => pres.defineSlideMaster({
 });
 contentLayout("CONTENT", 0.5, C.text1);
 contentLayout("CONTENT_PREP", 1.02, C.text1);
-contentLayout("VIDEO", 0.5, "000000");
+contentLayout("VIDEO", 0.5, C.text1);
 
 // ===== 文字の強調：**…** をアクセント色に、\n を改行に =====
 function rich(text, base = {}, accent = ACC) {
@@ -73,7 +74,7 @@ const on = k => `${k}-${++objN}`;
 
 function prepChip(slide, letter) {
   slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 0.34, w: 0.42, h: 0.42, rectRadius: 0.08, fill: { color: ACC }, line: { type: "none" }, objectName: on("prep") });
-  slide.addText(letter, { x: 0.5, y: 0.34, w: 0.42, h: 0.42, fontSize: 18, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("prep-letter") });
+  slide.addText(letter, { x: 0.5, y: 0.34, w: 0.42, h: 0.42, fontSize: 18, bold: true, color: ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("prep-letter") });
 }
 function newSlide(sl, section) {
   const layout = sl.prep ? "CONTENT_PREP" : "CONTENT";
@@ -90,9 +91,9 @@ function heading(s, text, x, y, w, size = 30) {
 function answerBanner(s, ans, x, y, w, h) { // 結論との対応：何の課題を、どう解決したか
   s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, rectRadius: 0.12, fill: { color: CARD }, line: { color: GOLD, width: 2 }, objectName: on("ans") });
   s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.22, y: y + (h - 0.5) / 2, w: 1.15, h: 0.5, rectRadius: 0.08, fill: { color: GOLD }, line: { type: "none" }, objectName: on("ans-chip") });
-  s.addText(ans.label, { x: x + 0.22, y: y + (h - 0.5) / 2, w: 1.15, h: 0.5, fontSize: 18, bold: true, color: C.text1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("ans-chip-t") });
+  s.addText(ans.label, { x: x + 0.22, y: y + (h - 0.5) / 2, w: 1.15, h: 0.5, fontSize: 18, bold: true, color: "1A1C22", align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("ans-chip-t") });
   const [l1, l2] = ans.text.split("\n");
-  s.addText([...rich(l1, { fontSize: 19, bold: true, color: GOLD }, ACC).map((r, i, a) => i === a.length - 1 ? { ...r, options: { ...r.options, breakLine: true } } : r), ...rich(l2, { fontSize: 16, bold: true, color: WHITE })],
+  s.addText([...rich(l1, { fontSize: 19, bold: true, color: WHITE }, ACC).map((r, i, a) => i === a.length - 1 ? { ...r, options: { ...r.options, breakLine: true } } : r), ...rich(l2, { fontSize: 16, bold: true, color: WHITE })],
     { x: x + 1.6, y, w: w - 1.8, h, margin: 0, valign: "middle", paraSpaceBefore: 3, isTextBox: true, objectName: on("ans-t") });
 }
 function noteLine(s, text, x, y, w) {
@@ -106,7 +107,7 @@ function items(s, list, x, y, w, size = 18) {
     const lh = estLines(it.text, size, w - 0.62) * size / 72 * 1.35;
     const h = Math.max(0.44, lh);
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: y + (h - 0.44) / 2, w: 0.44, h: 0.44, rectRadius: 0.08, fill: { color: ACC }, line: { type: "none" }, objectName: on("chip") });
-    s.addText(it.prep, { x, y: y + (h - 0.44) / 2, w: 0.44, h: 0.44, fontSize: 18, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("chip-t") });
+    s.addText(it.prep, { x, y: y + (h - 0.44) / 2, w: 0.44, h: 0.44, fontSize: 18, bold: true, color: ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("chip-t") });
     s.addText(rich(it.text, { fontSize: size, bold: true, color: WHITE }), { x: x + 0.62, y, w: w - 0.62, h, margin: 0, valign: "middle", isTextBox: true, objectName: on("item") });
     y += h + 0.2;
   });
@@ -128,10 +129,10 @@ function stats(s, list, x, y, w, h = 2.2) {
     const fill = it.total ? ACC : CARD;
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: cx, y, w: cw, h, rectRadius: 0.12, fill: { color: fill }, line: { color: it.total ? ACC : LINE, width: 1.5 }, objectName: on("stat-card") });
     s.addText([
-      { text: it.num, options: { fontSize: list.length > 3 ? 48 : 58, bold: true, color: it.total ? WHITE : ACC } },
-      { text: it.unit, options: { fontSize: 20, bold: true, color: WHITE } }
+      { text: it.num, options: { fontSize: list.length > 3 ? 48 : 58, bold: true, color: it.total ? ON : ACC } },
+      { text: it.unit, options: { fontSize: 20, bold: true, color: it.total ? ON : WHITE } }
     ], { x: cx, y: y + 0.3, w: cw, h: 1.0, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("stat-num") });
-    s.addText(rich(it.label, { fontSize: 16, bold: true, color: WHITE }), { x: cx + 0.1, y: y + 1.35, w: cw - 0.2, h: h - 1.45, align: "center", valign: "top", margin: 0, isTextBox: true, objectName: on("stat-label") });
+    s.addText(rich(it.label, { fontSize: 16, bold: true, color: it.total ? ON : WHITE }, it.total ? ON : ACC), { x: cx + 0.1, y: y + 1.35, w: cw - 0.2, h: h - 1.45, align: "center", valign: "top", margin: 0, isTextBox: true, objectName: on("stat-label") });
   });
   return y + h;
 }
@@ -198,7 +199,7 @@ function heroSlide(s, sl) {
     const [ttl, ...rest] = String(it.text).split("\n");
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: cw, h, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("sub-card") });
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.2, y: y + 0.2, w: 0.38, h: 0.38, rectRadius: 0.07, fill: { color: ACC }, line: { type: "none" }, objectName: on("sub-chip") });
-    s.addText(it.prep, { x: x + 0.2, y: y + 0.2, w: 0.38, h: 0.38, fontSize: 15, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("sub-chip-t") });
+    s.addText(it.prep, { x: x + 0.2, y: y + 0.2, w: 0.38, h: 0.38, fontSize: 15, bold: true, color: ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("sub-chip-t") });
     s.addText(rich(ttl.replace(/^→\s*/, ""), { fontSize: 18, bold: true, color: ACC }), { x: x + 0.7, y: y + 0.17, w: cw - 0.85, h: 0.44, margin: 0, valign: "middle", isTextBox: true, objectName: on("sub-title") });
     s.addText(rich(rest.join("\n").replace(/^→\s*/, ""), { fontSize: 18, bold: true, color: WHITE }), { x: x + 0.2, y: y + 0.72, w: cw - 0.4, h: h - 0.82, margin: 0, valign: "top", isTextBox: true, objectName: on("sub-text") });
   });
@@ -232,7 +233,7 @@ function handSlide(v, section) {
   if (v.compare) {
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 6.35, y: 1.0, w: 3.15, h: 3.95, rectRadius: 0.14, fill: { color: CARD }, line: { color: GOLD, width: 2 }, objectName: on("compare") });
     s.addText("多摩祭の親子は…", { x: 6.55, y: 1.2, w: 2.75, h: 0.4, fontSize: 16, bold: true, color: SUB, margin: 0, isTextBox: true, objectName: on("compare-h") });
-    s.addText([{ text: String(v.compare), options: { fontSize: 54, bold: true, color: GOLD } }, { text: "%", options: { fontSize: 24, bold: true, color: WHITE } }],
+    s.addText([{ text: String(v.compare), options: { fontSize: 54, bold: true, color: "8A5A00" } }, { text: "%", options: { fontSize: 24, bold: true, color: WHITE } }],
       { x: 6.35, y: 1.8, w: 3.15, h: 1.1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("compare-num") });
     s.addText(`「${v.yes}」`, { x: 6.55, y: 2.9, w: 2.75, h: 0.4, fontSize: 18, bold: true, color: WHITE, align: "center", margin: 0, isTextBox: true, objectName: on("compare-l") });
     s.addText("9作品全体 566票÷778票", { x: 6.55, y: 3.35, w: 2.75, h: 0.35, fontSize: 12, color: MUTED, align: "center", margin: 0, isTextBox: true, objectName: on("compare-src") });
@@ -279,7 +280,7 @@ for (const raw of SLIDES) {
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: top, w: lw, h: bh, rectRadius: 0.14, fill: { color: "FFFFFF" }, line: { color: ACC, width: 2.5 }, objectName: on("lineup-card") });
     const [iw, ih] = fitBox(1200, 622, lw - 0.4, bh - 0.75);
     s.addImage({ path: A + "lineup.jpg", x: X + (lw - iw) / 2, y: top + 0.2 + (bh - 0.75 - ih) / 2, w: iw, h: ih, altText: sl.split.cap, objectName: on("lineup") });
-    s.addText(sl.split.cap, { x: X + 0.2, y: bot - 0.55, w: lw - 0.4, h: 0.4, fontSize: 15, bold: true, color: C.text1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("lineup-cap") });
+    s.addText(sl.split.cap, { x: X + 0.2, y: bot - 0.55, w: lw - 0.4, h: 0.4, fontSize: 15, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("lineup-cap") });
     // 右：環境・社会への貢献（上下に均等）
     const px = X + lw + 0.3, pw = 9.5 - px, gap = 0.25, ph = (bh - gap) / 2;
     sl.pillars.forEach((p, i) => {
@@ -308,13 +309,13 @@ for (const raw of SLIDES) {
       const x = X + i * (cw + gap), last = i === n - 1;
       s.addShape(pres.shapes.OVAL, { x: x + cw / 2 - 0.17, y: lineY - 0.17, w: 0.34, h: 0.34, fill: { color: last ? ACC : C.text1 }, line: { color: ACC, width: 3 }, objectName: on("tl-dot") });
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 1.7, w: cw, h: 2.3, rectRadius: 0.14, fill: { color: last ? ACC : CARD }, line: { color: last ? ACC : LINE, width: 1.5 }, objectName: on("tl-card") });
-      s.addText(yr, { x: x + 0.25, y: 1.85, w: cw - 0.5, h: 0.6, fontSize: 36, bold: true, color: last ? WHITE : ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("tl-year") });
-      s.addText(rich(TL[yr], { fontSize: 17, bold: true, color: WHITE }, last ? WHITE : ACC), { x: x + 0.25, y: 2.45, w: cw - 0.5, h: 1.5, margin: 0, valign: "top", lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("tl-text") });
+      s.addText(yr, { x: x + 0.25, y: 1.85, w: cw - 0.5, h: 0.6, fontSize: 36, bold: true, color: last ? ON : ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("tl-year") });
+      s.addText(rich(TL[yr], { fontSize: 17, bold: true, color: last ? ON : WHITE }, last ? ON : ACC), { x: x + 0.25, y: 2.45, w: cw - 0.5, h: 1.5, margin: 0, valign: "top", lineSpacingMultiple: 1.05, isTextBox: true, objectName: on("tl-text") });
     });
     const [label, body0] = sl.lines[0].split("\n");
     const body = body0.replace("発信で、", "発信で、\n");
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y: 4.3, w: W, h: 0.85, rectRadius: 0.12, fill: { color: CARD }, line: { color: GOLD, width: 1.5 }, objectName: on("request") });
-    s.addText(label.replace(/：$/, ""), { x: X + 0.3, y: 4.3, w: 2.0, h: 0.85, fontSize: 16, bold: true, color: GOLD, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-k") });
+    s.addText(label.replace(/：$/, ""), { x: X + 0.3, y: 4.3, w: 2.0, h: 0.85, fontSize: 16, bold: true, color: "8A5A00", margin: 0, valign: "middle", isTextBox: true, objectName: on("request-k") });
     s.addText(body, { x: X + 2.3, y: 4.3, w: W - 2.6, h: 0.85, fontSize: 17, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("request-v") });
     continue;
   }
@@ -340,7 +341,7 @@ for (const raw of SLIDES) {
       const x = X + k * (cw + gap);
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: top, w: cw, h, rectRadius: 0.14, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("iss") });
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.25, y: top + 0.22, w: 1.75, h: 0.4, rectRadius: 0.08, fill: { color: ACC }, line: { type: "none" }, objectName: on("iss-chip") });
-      s.addText(it.who, { x: x + 0.25, y: top + 0.22, w: 1.75, h: 0.4, fontSize: 15, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("iss-chip-t") });
+      s.addText(it.who, { x: x + 0.25, y: top + 0.22, w: 1.75, h: 0.4, fontSize: 15, bold: true, color: ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("iss-chip-t") });
       const th = nLines(it.title) * 0.36;
       s.addText(rich(it.title, { fontSize: 18, bold: true, color: WHITE }), { x: x + 0.25, y: top + 0.75, w: cw - 0.5, h: th, margin: 0, valign: "top", isTextBox: true, objectName: on("iss-title") });
       if (k === 0) {
@@ -368,8 +369,8 @@ for (const raw of SLIDES) {
     sl.photos.forEach((p, i) => {
       const x = X + i * (pw + gap);
       s.addImage({ path: A + `flow${i + 1}_d.jpg`, x, y: py, w: pw, h: ph, altText: p.cap, objectName: on("flow-img") });
-      s.addShape(pres.shapes.OVAL, { x: x + 0.12, y: py + 0.12, w: 0.55, h: 0.55, fill: { color: ACC }, line: { color: WHITE, width: 1.5 }, objectName: on("step") });
-      s.addText(String(i + 1), { x: x + 0.12, y: py + 0.12, w: 0.55, h: 0.55, fontSize: 20, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("step-t") });
+      s.addShape(pres.shapes.OVAL, { x: x + 0.12, y: py + 0.12, w: 0.55, h: 0.55, fill: { color: ACC }, line: { color: ON, width: 1.5 }, objectName: on("step") });
+      s.addText(String(i + 1), { x: x + 0.12, y: py + 0.12, w: 0.55, h: 0.55, fontSize: 20, bold: true, color: ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("step-t") });
       s.addText(p.cap, { x: x - 0.1, y: py + ph + 0.15, w: pw + 0.2, h: 0.5, fontSize: 22, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("flow-cap") });
       if (p.sub) s.addText(p.sub, { x: x - 0.1, y: py + ph + 0.65, w: pw + 0.2, h: 0.4, fontSize: 16, bold: true, color: SUB, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("flow-sub") });
       if (i < 2) s.addText("▶", { x: x + pw, y: py + ph / 2 - 0.25, w: gap, h: 0.5, fontSize: 20, bold: true, color: ACC, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("arrow") });
@@ -389,11 +390,11 @@ for (const raw of SLIDES) {
     steps.forEach((st, i) => {
       const x = X + i * (cw + gap);
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: top, w: cw, h, rectRadius: 0.14, fill: { color: st.hot ? ACC : CARD }, line: { color: st.hot ? ACC : LINE, width: 1.5 }, objectName: on("r2-card") });
-      s.addShape(pres.shapes.OVAL, { x: x + 0.22, y: top + 0.22, w: 0.44, h: 0.44, fill: { color: st.hot ? WHITE : ACC }, line: { type: "none" }, objectName: on("r2-num") });
-      s.addText(String(i + 1), { x: x + 0.22, y: top + 0.22, w: 0.44, h: 0.44, fontSize: 17, bold: true, color: st.hot ? ACC : WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("r2-num-t") });
-      s.addText(st.label, { x: x + 0.78, y: top + 0.22, w: cw - 1.0, h: 0.44, fontSize: 18, bold: true, color: WHITE, valign: "middle", margin: 0, isTextBox: true, objectName: on("r2-label") });
+      s.addShape(pres.shapes.OVAL, { x: x + 0.22, y: top + 0.22, w: 0.44, h: 0.44, fill: { color: st.hot ? ON : ACC }, line: { type: "none" }, objectName: on("r2-num") });
+      s.addText(String(i + 1), { x: x + 0.22, y: top + 0.22, w: 0.44, h: 0.44, fontSize: 17, bold: true, color: st.hot ? ACC : ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("r2-num-t") });
+      s.addText(st.label, { x: x + 0.78, y: top + 0.22, w: cw - 1.0, h: 0.44, fontSize: 18, bold: true, color: st.hot ? ON : WHITE, valign: "middle", margin: 0, isTextBox: true, objectName: on("r2-label") });
       if (st.q) {
-        s.addText(st.q, { x: x + 0.2, y: top + 0.85, w: cw - 0.4, h: h - 1.05, fontSize: 28, bold: true, color: st.hot ? WHITE : ACC, align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 1.1, isTextBox: true, objectName: on("r2-quote") });
+        s.addText(st.q, { x: x + 0.2, y: top + 0.85, w: cw - 0.4, h: h - 1.05, fontSize: 28, bold: true, color: st.hot ? ON : ACC, align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 1.1, isTextBox: true, objectName: on("r2-quote") });
       } else {
         const iw = cw - 1.15, ih = iw * 552 / 972;
         s.addImage({ path: A + "v2thumb_r_c.jpg", x: x + (cw - iw) / 2, y: top + 0.85, w: iw, h: ih, altText: "呼び込み動画", objectName: on("r2-img") });
@@ -445,10 +446,10 @@ for (const raw of SLIDES) {
     sl.steps.forEach((st, i) => {
       const x = X + i * (cw + gap), last = i === n - 1;
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: top, w: cw, h, rectRadius: 0.14, fill: { color: last ? ACC : CARD }, line: { color: last ? ACC : LINE, width: 1.5 }, objectName: on("stp-card") });
-      s.addShape(pres.shapes.OVAL, { x: x + 0.18, y: top + 0.2, w: 0.46, h: 0.46, fill: { color: last ? WHITE : ACC }, line: { type: "none" }, objectName: on("stp-num") });
-      s.addText(String(i + 1), { x: x + 0.18, y: top + 0.2, w: 0.46, h: 0.46, fontSize: 18, bold: true, color: last ? ACC : WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("stp-num-t") });
-      s.addText(st.title, { x: x + 0.72, y: top + 0.2, w: cw - 0.85, h: 0.46, fontSize: 19, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("stp-title") });
-      s.addText(rich(st.text, { fontSize: 17, bold: true, color: WHITE }, last ? WHITE : ACC), { x: x + 0.18, y: top + 0.85, w: cw - 0.36, h: h - 1.0, margin: 0, valign: "middle", align: "center", lineSpacingMultiple: 1.1, isTextBox: true, objectName: on("stp-text") });
+      s.addShape(pres.shapes.OVAL, { x: x + 0.18, y: top + 0.2, w: 0.46, h: 0.46, fill: { color: last ? ON : ACC }, line: { type: "none" }, objectName: on("stp-num") });
+      s.addText(String(i + 1), { x: x + 0.18, y: top + 0.2, w: 0.46, h: 0.46, fontSize: 18, bold: true, color: last ? ACC : ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("stp-num-t") });
+      s.addText(st.title, { x: x + 0.72, y: top + 0.2, w: cw - 0.85, h: 0.46, fontSize: 19, bold: true, color: last ? ON : WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("stp-title") });
+      s.addText(rich(st.text, { fontSize: 17, bold: true, color: last ? ON : WHITE }, last ? ON : ACC), { x: x + 0.18, y: top + 0.85, w: cw - 0.36, h: h - 1.0, margin: 0, valign: "middle", align: "center", lineSpacingMultiple: 1.1, isTextBox: true, objectName: on("stp-text") });
       if (i < n - 1) s.addText("▶", { x: x + cw, y: top + h / 2 - 0.25, w: gap, h: 0.5, fontSize: 18, bold: true, color: ACC, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("stp-arrow") });
     });
     const [lab, txt] = sl.lines[0].split("：");
@@ -481,7 +482,7 @@ for (const raw of SLIDES) {
       const x = X + lw + 0.2 + j * cw;
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.06, y: top, w: cw - 0.12, h: 5.12 - top, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("vs-col") });
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.06, y: top, w: cw - 0.12, h: hh, rectRadius: 0.12, fill: { color: ACC }, line: { type: "none" }, objectName: on("vs-hbg") });
-      s.addText(c, { x, y: top, w: cw, h: hh, fontSize: 18, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("vs-h") });
+      s.addText(c, { x, y: top, w: cw, h: hh, fontSize: 18, bold: true, color: ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("vs-h") });
     });
     let y = top + hh;
     v.rows.forEach((r, i) => {
@@ -545,7 +546,7 @@ for (const raw of SLIDES) {
       const y = top + i * (rh + gap);
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y, w: W, h: rh, rectRadius: 0.1, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("toc-row") });
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X + 0.18, y: y + (rh - 0.46) / 2, w: 0.46, h: 0.46, rectRadius: 0.08, fill: { color: ACC }, line: { type: "none" }, objectName: on("toc-chip") });
-      s.addText(it.prep, { x: X + 0.18, y: y + (rh - 0.46) / 2, w: 0.46, h: 0.46, fontSize: 19, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("toc-chip-t") });
+      s.addText(it.prep, { x: X + 0.18, y: y + (rh - 0.46) / 2, w: 0.46, h: 0.46, fontSize: 19, bold: true, color: ON, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("toc-chip-t") });
       const [a, b] = it.text.split("：");
       s.addText(b ? [{ text: a, options: { fontSize: 21, bold: true, color: WHITE } }, { text: "　" + b, options: { fontSize: 17, bold: true, color: SUB } }] : [{ text: a, options: { fontSize: 21, bold: true, color: WHITE } }],
         { x: X + 0.85, y, w: W - 1.05, h: rh, margin: 0, valign: "middle", isTextBox: true, objectName: on("toc-t") });
