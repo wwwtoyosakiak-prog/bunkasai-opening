@@ -10,7 +10,7 @@ const A = "assets/";
 const OUT = process.argv[2] || "deck.pptx";
 
 // ===== テーマ：黒地＋白の太字＋ピンクのアクセント（サイトと同じ） =====
-const HEX = { bg: "0B0B0F", card: "16161C", line: "2E2E38", text: "FFFFFF", sub: "C8C8D2", muted: "8A8A93", accent: "FF3B6B", gold: "FFD60A" };
+const HEX = { bg: "0B0B0F", card: "1F1F28", line: "4A4A5A", text: "FFFFFF", sub: "E4E4EC", muted: "B4B4C0", accent: "FF4573", gold: "FFD60A" };
 const THEME = {
   name: "Bunkasai Dark",
   headFontFace: "Yu Gothic",
@@ -436,6 +436,41 @@ for (const raw of SLIDES) {
       s.addText("→ " + body, { x: X + 0.3, y: y + rh / 2, w: lw - 0.5, h: rh / 2 - 0.12, fontSize: 17, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("v-b") });
     });
     answerBanner(s, sl.answer, X, 4.45, W, 0.7);
+    continue;
+  }
+
+  if (sl.compare) { // なぜ動画？：方法ごとの○△×を表で、動画の列を強調
+    const cp = sl.compare, top = 1.65, hh = 0.5, nr = cp.rows.length, rh = 0.55, lw = 4.3, cw = (W - lw) / cp.cols.length;
+    heading(s, sl.heading, X, 0.95, W, 28);
+    const vx = X + lw + cw * (cp.cols.length - 1);
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: vx + 0.05, y: top - 0.05, w: cw - 0.1, h: hh + nr * rh + 0.1, rectRadius: 0.12, fill: { color: CARD }, line: { color: ACC, width: 2.5 }, objectName: on("cmp-hl") });
+    cp.cols.forEach((c, j) => s.addText(c, { x: X + lw + j * cw, y: top, w: cw, h: hh, fontSize: 17, bold: true, color: j === cp.cols.length - 1 ? ACC : SUB, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("cmp-h") }));
+    cp.rows.forEach((r, i) => {
+      const y = top + hh + i * rh;
+      s.addShape(pres.shapes.LINE, { x: X, y, w: W, h: 0, line: { color: LINE, width: 1 }, objectName: on("cmp-line") });
+      s.addText(r[0], { x: X + 0.1, y, w: lw - 0.1, h: rh, fontSize: 18, bold: true, color: WHITE, margin: 0, valign: "middle", isTextBox: true, objectName: on("cmp-k") });
+      r.slice(1).forEach((m, j) => s.addText(m, { x: X + lw + j * cw, y, w: cw, h: rh, fontSize: 26, bold: true, color: m === "○" ? (j === cp.cols.length - 1 ? ACC : WHITE) : MUTED, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("cmp-m") }));
+    });
+    const [lab, txt] = sl.lines[0].split("：");
+    answerBanner(s, { label: lab, text: txt }, X, 4.45, W, 0.7);
+    continue;
+  }
+
+  if (sl.vs) { // 2つの動画のちがい：左右の比較表
+    const v = sl.vs, top = 1.6, hh = 0.5, nr = v.rows.length, rh = (5.1 - top - hh) / nr, lw = 1.8, cw = (W - lw - 0.2) / 2;
+    heading(s, sl.heading, X, 0.95, W, 28);
+    v.cols.forEach((c, j) => {
+      const x = X + lw + 0.2 + j * cw;
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.06, y: top, w: cw - 0.12, h: hh + nr * rh, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("vs-col") });
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x + 0.06, y: top, w: cw - 0.12, h: hh, rectRadius: 0.12, fill: { color: ACC }, line: { type: "none" }, objectName: on("vs-hbg") });
+      s.addText(c, { x, y: top, w: cw, h: hh, fontSize: 19, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: on("vs-h") });
+    });
+    v.rows.forEach((r, i) => {
+      const y = top + hh + i * rh;
+      if (i) s.addShape(pres.shapes.LINE, { x: X, y, w: W, h: 0, line: { color: LINE, width: 0.75 }, objectName: on("vs-line") });
+      s.addText(r[0], { x: X, y, w: lw, h: rh, fontSize: 16, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("vs-k") });
+      r.slice(1).forEach((t, j) => s.addText(rich(t, { fontSize: 15, bold: true, color: t === "要確認" ? MUTED : WHITE }), { x: X + lw + 0.2 + j * cw + 0.25, y, w: cw - 0.5, h: rh, align: "center", margin: 0, valign: "middle", isTextBox: true, objectName: on("vs-v") }));
+    });
     continue;
   }
 
