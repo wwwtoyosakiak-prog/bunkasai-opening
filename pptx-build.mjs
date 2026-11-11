@@ -415,7 +415,7 @@ for (const raw of SLIDES) {
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X, y, w: lw, h: rh, rectRadius: 0.12, fill: { color: CARD }, line: { color: LINE, width: 1 }, objectName: on("r3-row") });
       s.addShape(pres.shapes.RECTANGLE, { x: X, y: y + 0.18, w: 0.08, h: rh - 0.36, fill: { color: ACC }, line: { type: "none" }, objectName: on("r3-bar") });
       s.addText(k, { x: X + 0.3, y, w: 1.8, h: rh, fontSize: 18, bold: true, color: ACC, margin: 0, valign: "middle", isTextBox: true, objectName: on("r3-k") });
-      s.addText(rich(v, { fontSize: 20, bold: true, color: WHITE }), { x: X + 2.15, y, w: lw - 2.35, h: rh, margin: 0, valign: "middle", isTextBox: true, objectName: on("r3-v") });
+      s.addText(rich(v, { fontSize: sl.facts.some(([, t]) => t.split("\n").length > 2) ? 17 : 20, bold: true, color: WHITE }), { x: X + 2.15, y, w: lw - 2.35, h: rh, margin: 0, valign: "middle", isTextBox: true, objectName: on("r3-v") });
     });
     noteLine(s, sl.lines[0], X, 4.6, lw);
     if (sl.then) videoSlide(VID[sl.then], sec);
